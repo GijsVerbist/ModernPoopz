@@ -13,7 +13,8 @@ class Toilet(
              var categorie: String,
              var omschrijving: String,
              var doelgroep: String,
-             var luiertafel: String
+             var luiertafel: String,
+             var integraal_toegangelijk: String
 
 
 ) {
@@ -38,15 +39,13 @@ companion object{
                         toilets.getJSONObject(it).getString("CATEGORIE"),
                         toilets.getJSONObject(it).getString("OMSCHRIJVING"),
                         toilets.getJSONObject(it).getString("DOELGROEP"),
+                        toilets.getJSONObject(it).getString("INTEGRAAL_TOEGANKELIJK"),
                         toilets.getJSONObject(it).getString("LUIERTAFEL"))
 
             }
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-
-
-
         return toiletList
     }
 

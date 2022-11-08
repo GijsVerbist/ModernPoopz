@@ -25,20 +25,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
+        // lijst
         listView = findViewById<ListView>(R.id.recipe_list_view)
-// 1
+
         val toiletList = Toilet.getToiletsFromFile("toilets.json", this)
-// 2
-        val listItems = arrayOfNulls<String>(toiletList.size)
-// 3
-        for (i in 0 until toiletList.size) {
-            val toilet = toiletList[i]
-            listItems[i] = toilet.straat
-        }
-// 4
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, listItems)
+
+        val adapter = ToiletAdapter(this, toiletList)
         listView.adapter = adapter
 
 
