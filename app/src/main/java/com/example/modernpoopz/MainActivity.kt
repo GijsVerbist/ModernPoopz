@@ -27,35 +27,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*setContentView(R.layout.activity_main)
 
-
-
-        listView = findViewById<ListView>(R.id.recipe_list_view)
-
-        val toiletList = Toilet.getToiletsFromFile("toilets.json", this)
-
-        val adapter = ToiletAdapter(this, toiletList)
-        listView.adapter = adapter*/
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //val navView: BottomNavigationView = binding.navView
-        //val navController = findNavController(R.id.nav_view)
+        val navView: BottomNavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_view) as NavHostFragment?
-       val navController = navHostFragment?.navController
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home
+                R.id.navigation_map, R.id.navigation_home
             )
         )
         if (navController != null) {
             setupActionBarWithNavController(navController, appBarConfiguration)
-            //navView.setupWithNavController(navController)
+            navView.setupWithNavController(navController)
         }
 
 

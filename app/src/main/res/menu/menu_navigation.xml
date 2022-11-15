@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/list"
-        android:title="list"
-        android:icon="@drawable/ic_baseline_list_24"></item>
 
     <item
-        android:id="@+id/map"
-        android:title="map"
-        android:icon="@drawable/ic_baseline_map_24">
+        android:id="@+id/navigation_home"
+        android:title="@string/app_name"
+        android:icon="@drawable/ic_baseline_list_24">
     </item>
 
     <item
-        android:id="@+id/home"
-        android:title="home"
+        android:id="@+id/navigation_map"
+        android:title="@string/app_name"
         android:icon="@drawable/ic_baseline_map_24">
     </item>
+
+
+
+
 
 </menu>
