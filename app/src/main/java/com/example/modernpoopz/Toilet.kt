@@ -20,8 +20,8 @@ class Toilet(
 ) {
 
 companion object{
-    fun getToiletsFromFile(filename: String, context: Context): ArrayList<Toilet>{
-        val toiletList = ArrayList<Toilet>()
+    fun getToiletsFromFile(filename: String, context: Context?): ArrayList<Toilet?>{
+        val toiletList = ArrayList<Toilet?>()
 
         try {
             // Load data
@@ -52,16 +52,16 @@ companion object{
     }
 }
 
-private fun loadJsonFromAsset(filename: String, context: Context): String? {
+private fun loadJsonFromAsset(filename: String, context: Context?): String? {
     var json: String? = null
 
     try {
-        val inputStream = context.assets.open(filename)
-        val size = inputStream.available()
-        val buffer = ByteArray(size)
-        inputStream.read(buffer)
-        inputStream.close()
-        json = String(buffer, Charsets.UTF_8)
+        val inputStream = context?.assets?.open(filename)
+        val size = inputStream?.available()
+        val buffer = size?.let { ByteArray(it) }
+        inputStream?.read(buffer)
+        inputStream?.close()
+        json = buffer?.let { String(it, Charsets.UTF_8) }
     } catch (ex: java.io.IOException) {
         ex.printStackTrace()
         return null
@@ -71,15 +71,4 @@ private fun loadJsonFromAsset(filename: String, context: Context): String? {
 }
 
 
-/*
-class Toilet(var straat: String,
-             var huisnummer: String,
-             var postcode: Int,
-             var betalend: String,
-             var categorie: String,
-             var omschrijving: String,
-             var doelgroep: String,
-             var luiertafel: String) {
 
-
-}*/

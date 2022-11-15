@@ -7,26 +7,49 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 
-class ToiletAdapter(private val context: Context, private val dataSource: ArrayList<Toilet>): BaseAdapter() {
+class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
+    private var toilets: ArrayList<Toilet?>? = null
 
-    private val inflater: LayoutInflater
-    = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
-    override fun getCount(): Int {
-        return dataSource.size
+    fun setToilets( toiletList: ArrayList<Toilet?>) {
+        this.toilets = toiletList
+        notifyDataSetChanged()
     }
 
-    override fun getItem(position: Int): Any {
-        return dataSource[position]
+    override fun getItemCount(): Int {
+        return toilets!!.count()
     }
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =  CustomViewHolder (
+        LayoutInflater.from(parent.context).inflate(R.layout.list_item_toilet,parent,false)
+    )
+
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        val toiletList = toilets!![position]
+        if (toiletList != null) {
+            holder.bindView(toiletList)
+        }
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+    inner class CustomViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
+        private var street = view.findViewById<TextView>(R.id.toilet_list_title)
+       // private var huisnummer = view.findViewById<TextView>(R.id.toilet_list_subtitle)
+        private var postcode = view.findViewById<TextView>(R.id.toilet_list_detail)
+
+        fun bindView(toilet: Toilet) {
+
+            street.text = toilet.straat + " " +toilet.huisnummer
+            //huisnummer.text = toilet.huisnummer
+            postcode.text = toilet.postcode.toString()
+        }
+
+
+
+
+   /* override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
         val rowView = inflater.inflate(R.layout.list_item_toilet, parent, false)
 
@@ -53,6 +76,9 @@ class ToiletAdapter(private val context: Context, private val dataSource: ArrayL
 
 
         return rowView
+    }*/
+
+
     }
 
 
