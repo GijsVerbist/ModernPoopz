@@ -2,6 +2,7 @@ package com.example.modernpoopz
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ class ListFragment : Fragment() {
     private var toilet: Toilet? = null
     private var toiletAdapter: ToiletAdapter? = null
     private var _binding: FragmentListBinding? = null
+    private var databaseHelper: DatabaseHelper? = null
 
     private val binding get() = _binding!!
 
@@ -28,14 +30,18 @@ class ListFragment : Fragment() {
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //toiletAdapter = Toilet.getToiletsFromFile("toilets.json", this)
+        databaseHelper = DatabaseHelper(requireContext(),null)
 
 
         return root
     }
 
-    fun getToilets(context: Context?){
+    fun getToilets(){
 
-        val toiletList = Toilet.getToiletsFromFile("toilets.json", context)
+        val toiletList = databaseHelper?.getToilets()
+
+        println("get toilets " + toiletList?.count().toString())
+
         toiletAdapter?.setToilets(toiletList!!)
 
     }
@@ -48,7 +54,7 @@ class ListFragment : Fragment() {
         toiletAdapter = ToiletAdapter()
         recyclerview?.adapter = toiletAdapter
 
-        getToilets(context)
+        getToilets()
 
     }
 

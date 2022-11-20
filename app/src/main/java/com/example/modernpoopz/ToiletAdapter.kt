@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
-    private var toilets: ArrayList<Toilet?>? = null
+    private var toilets: ArrayList<Toilet>? = null
 
-    fun setToilets( toiletList: ArrayList<Toilet?>) {
+    fun setToilets( toiletList: ArrayList<Toilet>) {
         this.toilets = toiletList
         notifyDataSetChanged()
     }
