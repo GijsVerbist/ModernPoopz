@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/navigation_map"
-        android:title="@string/app_name"
+        android:title="Map"
         android:icon="@drawable/ic_baseline_map_24">
     </item>
 

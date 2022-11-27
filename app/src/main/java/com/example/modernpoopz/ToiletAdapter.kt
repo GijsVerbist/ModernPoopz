@@ -41,9 +41,9 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
         fun bindView(toilet: Toilet) {
 
-            street.text = toilet.straat + " " +toilet.huisnummer
+            street.text = toilet.properties.STRAAT + " " +toilet.properties.HUISNUMMER
             //huisnummer.text = toilet.huisnummer
-            postcode.text = toilet.postcode.toString()
+            postcode.text = toilet.properties.POSTCODE.toString()
         }
 
 

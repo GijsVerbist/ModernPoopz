@@ -19,7 +19,6 @@ class Toilets(
 
     companion object {
         fun getToiletsFromApi(activity: FragmentActivity){
-            val toiletList = ArrayList<Toilet?>()
 
             val client = OkHttpClient()
 
@@ -34,29 +33,39 @@ class Toilets(
 
                 override fun onResponse(call: Call, response: Response) {
                     response.use {
+                        if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
 
                         val json = response.body!!.string()
+                        println("json!: $json")
 
                         val gson = GsonBuilder().create()
                         val toilets = gson.fromJson(json, Toilets::class.java)
 
+                        println("toilets!: "+toilets.features.toString())
+
+                        for(toilet in toilets.features){
+                           // println("STRAAT!: " + toilet.straat)
+                        }
+
                         val database = DatabaseHelper(activity, null)
 
-                        for (toilet in toilets.features) {
 
+                        for (toilet in toilets.features) {
+                            println("Straat!: " + toilet.properties.STRAAT)
                             database.addToilet(
-                                toilet.straat,
-                                toilet.huisnummer,
-                                toilet.betalend,
-                                toilet.postcode,
-                                toilet.long,
-                                toilet.lat,
-                                toilet.categorie,
-                                toilet.omschrijving,
-                                toilet.doelgroep,
-                                toilet.integraal_toegangelijk,
-                                toilet.luiertafel,
+                                toilet.properties.STRAAT,
+                                toilet.properties.HUISNUMMER,
+                                toilet.properties.BETALEND,
+                                toilet.properties.POSTCODE,
+                                toilet.geometry.coordinates?.get(0),
+                                toilet.geometry.coordinates?.get(1),
+                                toilet.properties.CATEGORIE,
+                                toilet.properties.OMSCHRIJVING,
+                                toilet.properties.DOELGROEP,
+                                toilet.properties.INTEGRAAL_TOEGANKELIJK,
+                                toilet.properties.LUIERTAFEL,
+                                //toilet.properties.type
                                 )
 
 
@@ -70,7 +79,7 @@ class Toilets(
         }
     }
 }
-class Toilet(var straat: String?,
+/*class Toilet(var straat: String?,
              var huisnummer: String?,
              var postcode: Int?,
              var long: Double?,
@@ -81,7 +90,22 @@ class Toilet(var straat: String?,
              var doelgroep: String?,
              var luiertafel: String?,
              var integraal_toegangelijk: String?,
-             var type: String?)
+             var type: String?)*/
+
+class Toilet (val id: Int,val geometry: Geometry, val properties: Properties)
+class Geometry(val coordinates: DoubleArray?)
+class Properties(
+    var STRAAT: String?,
+    var HUISNUMMER: String?,
+    var POSTCODE: Int?,
+    var BETALEND: String?,
+    var CATEGORIE: String?,
+    var OMSCHRIJVING: String?,
+    var DOELGROEP: String?,
+    var LUIERTAFEL: String?,
+    var INTEGRAAL_TOEGANKELIJK: String?,
+ //   var type: String?
+)
 
 
 

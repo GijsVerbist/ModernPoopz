@@ -10,10 +10,11 @@ import androidx.core.database.getDoubleOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 
-class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
+class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
+        DATABASE_VERSION++
         val first_query = ("CREATE TABLE " + TABLE_NAME +
                 " (" +
                 ID_COL + " INTEGER PRIMARY KEY, " +
@@ -32,6 +33,7 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
                 )
 
         db.execSQL(first_query)
+
 
     }
 
@@ -52,7 +54,8 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
         omschrijving: String?,
         doelgroep: String?,
         integraal_toegankelijk: String?,
-        luiertafel: String?
+        luiertafel: String?,
+       // type: String?
     ){
 
         val values = ContentValues()
@@ -68,6 +71,7 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
         values.put(DOELGROEP_COL, doelgroep)
         values.put(INTEGRAAL_TOEGANKELIJK_COL, integraal_toegankelijk)
         values.put(LUIERTAFEL_COL, luiertafel)
+        //values.put(TYPE_COL, type)
 
         val database = this.writableDatabase
 
@@ -88,6 +92,7 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
         try {
 
             cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME, null)
+            println("test: " + cursor.toString())
 
         }catch (e: Exception){
             e.printStackTrace()
@@ -121,12 +126,19 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
                 doelgroep = cursor.getStringOrNull( cursor.getColumnIndex("doelgroep"))
                 luiertafel = cursor.getStringOrNull( cursor.getColumnIndex("luiertafel"))
                 integraal_toegangelijk = cursor.getStringOrNull( cursor.getColumnIndex("integraal_toegangelijk"))
-                type = cursor.getStringOrNull( cursor.getColumnIndex("type"))
+                //type = cursor.getStringOrNull( cursor.getColumnIndex("type"))
 
-                val toilet = Toilet(street, housenumber, postcode, longitude, latitude, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk, type)
+               // val toilet = Toilet(street, housenumber, postcode, longitude, latitude, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk, type)
+
+
+                val geometryArray = doubleArrayOf(1.0, 2.0)
+                val toilet = Toilet(
+                    properties = Properties(street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk),
+                    geometry = Geometry(geometryArray),
+                    id = 0 )
                 toilets.add(toilet)
 
-                println("toilet straat " + toilet.straat)
+               // println("toilet straat " + toilet.straat)
             } while(cursor.moveToNext())
 
         }
@@ -137,14 +149,15 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
 
     }
 
-    companion object{
 
+
+    companion object{
 
 
         private val DATABASE_NAME = "ModernPoopz"
 
 
-        private val DATABASE_VERSION = 1
+        private var DATABASE_VERSION = 2
 
 
         val TABLE_NAME = "Toilets"
@@ -174,5 +187,7 @@ class   DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?)
         val INTEGRAAL_TOEGANKELIJK_COL = "integraal_toegankelijk"
 
         val LUIERTAFEL_COL = "luiertafel"
+
+        val TYPE_COL = "type"
     }
 }
