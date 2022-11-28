@@ -99,7 +99,6 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         try {
             cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME, null)
-            println("test: " + cursor.toString())
 
         }catch (e: Exception){
             e.printStackTrace()
@@ -135,10 +134,6 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 doelgroep = cursor.getStringOrNull( cursor.getColumnIndex("doelgroep"))
                 luiertafel = cursor.getStringOrNull( cursor.getColumnIndex("luiertafel"))
                 integraal_toegangelijk = cursor.getStringOrNull( cursor.getColumnIndex("integraal_toegangelijk"))
-                //type = cursor.getStringOrNull( cursor.getColumnIndex("type"))
-
-               // val toilet = Toilet(street, housenumber, postcode, longitude, latitude, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk, type)
-
 
                 val geometryArray = doubleArrayOf(latitude!!, longitude!!)
                 val toilet = Toilet(
@@ -147,7 +142,6 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                     id = 0 )
                 toilets.add(toilet)
 
-               // println("toilet straat " + toilet.straat)
             } while(cursor.moveToNext())
 
         }
