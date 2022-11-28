@@ -153,7 +153,7 @@ class MapFragment : Fragment() {
                 LabelledGeoPoint(
                     toilet.geometry.coordinates?.get(0)!!,
                     toilet.geometry.coordinates[1],
-                    counter.toString() + ": " +toilet.properties.STRAAT + " " + toilet.properties.HUISNUMMER
+                     ": " +toilet.properties.STRAAT + " " + toilet.properties.HUISNUMMER
                 )
             )
         }
