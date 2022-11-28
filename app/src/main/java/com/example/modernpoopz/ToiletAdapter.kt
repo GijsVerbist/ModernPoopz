@@ -36,13 +36,11 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
     inner class CustomViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
         private var street = view.findViewById<TextView>(R.id.toilet_list_title)
-       // private var huisnummer = view.findViewById<TextView>(R.id.toilet_list_subtitle)
         private var postcode = view.findViewById<TextView>(R.id.toilet_list_detail)
 
         fun bindView(toilet: Toilet) {
 
             street.text = toilet.properties.STRAAT + " " +toilet.properties.HUISNUMMER
-            //huisnummer.text = toilet.huisnummer
             postcode.text = toilet.properties.POSTCODE.toString()
         }
 

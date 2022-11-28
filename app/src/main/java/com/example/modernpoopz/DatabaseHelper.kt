@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import androidx.core.database.getDoubleOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
@@ -14,10 +15,11 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        DATABASE_VERSION++
+
         val first_query = ("CREATE TABLE " + TABLE_NAME +
                 " (" +
                 ID_COL + " INTEGER PRIMARY KEY, " +
+                OBJECTID_COL + " INTEGER, " +
                 STREET_COL + " TEXT, " +
                 HOUSENUMBER_COL + " TEXT, " +
                 POSTCODE_COL + " TEXT, " +
@@ -42,8 +44,13 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         onCreate(db)
     }
 
+    fun dropTable(db: SQLiteDatabase) {
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+    }
+
 
     fun addToilet(
+        objectId: Int?,
         street: String?,
         houseNumber: String?,
         paying: String?,
@@ -60,6 +67,7 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         val values = ContentValues()
 
+        values.put(OBJECTID_COL, objectId)
         values.put(STREET_COL, street)
         values.put(HOUSENUMBER_COL, houseNumber)
         values.put(PAYING_COL, paying)
@@ -90,7 +98,6 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val toilets : ArrayList<Toilet> = ArrayList()
 
         try {
-
             cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME, null)
             println("test: " + cursor.toString())
 
@@ -99,6 +106,7 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             database.execSQL("SELECT * FROM" + TABLE_NAME)
             return ArrayList()
         }
+        var objectId: Int?
         var street: String?
         var type: String?
         var paying: String?
@@ -116,6 +124,7 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         if(cursor.moveToFirst()) {
             do{
                 street = cursor.getStringOrNull( cursor.getColumnIndex("straat"))
+                objectId = cursor.getIntOrNull( cursor.getColumnIndex("objectid"))
                 paying = cursor.getStringOrNull( cursor.getColumnIndex("betalend"))
                 housenumber = cursor.getStringOrNull( cursor.getColumnIndex("huisnummer"))
                 postcode = cursor.getIntOrNull( cursor.getColumnIndex("postcode"))
@@ -131,9 +140,9 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                // val toilet = Toilet(street, housenumber, postcode, longitude, latitude, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk, type)
 
 
-                val geometryArray = doubleArrayOf(1.0, 2.0)
+                val geometryArray = doubleArrayOf(latitude!!, longitude!!)
                 val toilet = Toilet(
-                    properties = Properties(street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk),
+                    properties = Properties(objectId, street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk),
                     geometry = Geometry(geometryArray),
                     id = 0 )
                 toilets.add(toilet)
@@ -149,6 +158,19 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     }
 
+    fun NoDuplicationAllowed(id: Int): Boolean {
+        val db = this.readableDatabase
+        val cursor: Cursor?
+
+        cursor = db.rawQuery("select * from $TABLE_NAME where objectid =$id", null)
+        if (cursor.count  <= 0) {
+            cursor.close()
+            return false
+        }
+        cursor.close()
+        return true
+    }
+
 
 
     companion object{
@@ -157,14 +179,13 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         private val DATABASE_NAME = "ModernPoopz"
 
 
-        private var DATABASE_VERSION = 2
-
+        private var DATABASE_VERSION = 18
 
         val TABLE_NAME = "Toilets"
 
-
         val ID_COL = "id"
 
+        val OBJECTID_COL = "objectid"
 
         val STREET_COL = "straat"
 

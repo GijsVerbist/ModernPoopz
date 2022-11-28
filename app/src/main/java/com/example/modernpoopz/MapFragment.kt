@@ -9,7 +9,10 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -31,6 +34,7 @@ import com.example.modernpoopz.databinding.FragmentMapBinding
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 
 import org.osmdroid.config.Configuration.*
@@ -40,6 +44,10 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ItemizedIconOverlay
 import org.osmdroid.views.overlay.ItemizedOverlay
 import org.osmdroid.views.overlay.OverlayItem
+import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint
+import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
+import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions
+import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import java.io.File
 import java.net.URL
 import java.net.URLEncoder
@@ -131,6 +139,55 @@ class MapFragment : Fragment() {
         setCenter(GeoPoint(51.23020595, 4.41655480828479), "Campus Ellermanstraat")
 
 
+        val points = ArrayList<IGeoPoint>();
+        val db = DatabaseHelper(requireContext(), null)
+        val toilets = db.getToilets()
+
+        var hashMap : HashMap<Int, Toilet>
+                = HashMap<Int, Toilet> ()
+        for ((counter, toilet) in toilets.withIndex()) {
+
+            hashMap[counter] = toilet
+
+            points.add(
+                LabelledGeoPoint(
+                    toilet.geometry.coordinates?.get(0)!!,
+                    toilet.geometry.coordinates[1],
+                    counter.toString() + ": " +toilet.properties.STRAAT + " " + toilet.properties.HUISNUMMER
+                )
+            )
+        }
+
+// wrap them in a theme
+        val pt = SimplePointTheme(points, true);
+
+// create label style
+        val textStyle = Paint();
+        textStyle.style = Paint.Style.FILL
+        textStyle.color = Color.parseColor("#0000ff")
+        textStyle.textAlign = Paint.Align.CENTER
+        textStyle.textSize = 70F
+
+// set some visual options for the overlay
+// we use here MAXIMUM_OPTIMIZATION algorithm, which works well with >100k points
+        val opt = SimpleFastPointOverlayOptions.getDefaultStyle()
+            .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
+            .setRadius(25F).setIsClickable(true).setCellSize(15).setTextStyle(textStyle);
+
+// create the overlay with the theme
+        val sfpo = SimpleFastPointOverlay(pt, opt);
+
+
+        /*sfpo.setOnClickListener { pointAdapter: SimpleFastPointOverlay.PointAdapter, i: Int ->
+            val intent = Intent(requireContext(), PopUpActivity::class.java)
+
+            intent.putExtra("popuptitle",hashMap[i]!!.properties.STRAAT)
+            startActivity(intent)
+        }*/
+
+
+        map?.overlays?.add(sfpo);
+
 
 
 
@@ -192,7 +249,6 @@ class MapFragment : Fragment() {
 
             activity?.runOnUiThread {
                 val jsonString = StringBuilder(result!!)
-                Log.d("be.ap.edu.mapsaver", jsonString.toString())
 
                 val parser: Parser = Parser.default()
 

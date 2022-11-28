@@ -37,36 +37,31 @@ class Toilets(
 
 
                         val json = response.body!!.string()
-                        println("json!: $json")
 
                         val gson = GsonBuilder().create()
                         val toilets = gson.fromJson(json, Toilets::class.java)
-
-                        println("toilets!: "+toilets.features.toString())
-
-                        for(toilet in toilets.features){
-                           // println("STRAAT!: " + toilet.straat)
-                        }
 
                         val database = DatabaseHelper(activity, null)
 
 
                         for (toilet in toilets.features) {
-                            println("Straat!: " + toilet.properties.STRAAT)
-                            database.addToilet(
-                                toilet.properties.STRAAT,
-                                toilet.properties.HUISNUMMER,
-                                toilet.properties.BETALEND,
-                                toilet.properties.POSTCODE,
-                                toilet.geometry.coordinates?.get(0),
-                                toilet.geometry.coordinates?.get(1),
-                                toilet.properties.CATEGORIE,
-                                toilet.properties.OMSCHRIJVING,
-                                toilet.properties.DOELGROEP,
-                                toilet.properties.INTEGRAAL_TOEGANKELIJK,
-                                toilet.properties.LUIERTAFEL,
-                                //toilet.properties.type
+                            if(!database.NoDuplicationAllowed(toilet.properties.OBJECTID!!)) {
+                                database.addToilet(
+                                    toilet.properties.OBJECTID,
+                                    toilet.properties.STRAAT,
+                                    toilet.properties.HUISNUMMER,
+                                    toilet.properties.BETALEND,
+                                    toilet.properties.POSTCODE,
+                                    toilet.geometry.coordinates?.get(0),
+                                    toilet.geometry.coordinates?.get(1),
+                                    toilet.properties.CATEGORIE,
+                                    toilet.properties.OMSCHRIJVING,
+                                    toilet.properties.DOELGROEP,
+                                    toilet.properties.INTEGRAAL_TOEGANKELIJK,
+                                    toilet.properties.LUIERTAFEL,
+                                    //toilet.properties.type
                                 )
+                            }else(println("${toilet.properties.OBJECTID} is een duplicate!"))
 
 
                         }
@@ -79,22 +74,10 @@ class Toilets(
         }
     }
 }
-/*class Toilet(var straat: String?,
-             var huisnummer: String?,
-             var postcode: Int?,
-             var long: Double?,
-             var lat: Double?,
-             var betalend: String?,
-             var categorie: String?,
-             var omschrijving: String?,
-             var doelgroep: String?,
-             var luiertafel: String?,
-             var integraal_toegangelijk: String?,
-             var type: String?)*/
-
 class Toilet (val id: Int,val geometry: Geometry, val properties: Properties)
 class Geometry(val coordinates: DoubleArray?)
 class Properties(
+    var OBJECTID: Int?,
     var STRAAT: String?,
     var HUISNUMMER: String?,
     var POSTCODE: Int?,
@@ -107,54 +90,6 @@ class Properties(
  //   var type: String?
 )
 
-
-
-        /*try {
-            // Load data
-            val jsonString = loadJsonFromAsset(filename, context)
-            val json = JSONObject(jsonString)
-            val toilets = json.getJSONArray("features")
-
-
-            (0 until toilets.length()).mapTo(toiletList) {
-                Toilet(
-                    toilets.getJSONObject(it).getString("STRAAT"),
-                        toilets.getJSONObject(it).getString("HUISNUMMER"),
-                        toilets.getJSONObject(it).getInt("POSTCODE"),
-                        toilets.getJSONObject(it).getString("BETALEND"),
-                        toilets.getJSONObject(it).getString("CATEGORIE"),
-                        toilets.getJSONObject(it).getString("OMSCHRIJVING"),
-                        toilets.getJSONObject(it).getString("DOELGROEP"),
-                        toilets.getJSONObject(it).getString("INTEGRAAL_TOEGANKELIJK"),
-                        toilets.getJSONObject(it).getString("LUIERTAFEL"))
-
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return toiletList
-    }
-
-    }
-}
-
-private fun loadJsonFromAsset(filename: String, context: Context?): String? {
-    var json: String? = null
-
-    try {
-        val inputStream = context?.assets?.open(filename)
-        val size = inputStream?.available()
-        val buffer = size?.let { ByteArray(it) }
-        inputStream?.read(buffer)
-        inputStream?.close()
-        json = buffer?.let { String(it, Charsets.UTF_8) }
-    } catch (ex: java.io.IOException) {
-        ex.printStackTrace()
-        return null
-    }
-
-    return json
-    */
 
 
 
