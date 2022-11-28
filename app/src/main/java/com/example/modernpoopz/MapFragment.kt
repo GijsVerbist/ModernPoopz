@@ -105,13 +105,13 @@ class MapFragment : Fragment() {
             getAddressOrLocation(url)
         }
 
-        clearButton = view?.findViewById(R.id.clear_button)
+       /* clearButton = view?.findViewById(R.id.clear_button)
         clearButton?.setOnClickListener {
             map?.overlays?.clear()
             // Redraw map
             map?.invalidate()
         }
-
+*/
         // Permissions
         if (hasPermissions()) {
             giveMap()
@@ -134,20 +134,21 @@ class MapFragment : Fragment() {
 
         map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
 
+        map.setMultiTouchControls(true);
+
         map?.controller?.setZoom(17.0)
-        // default = Ellermanstraat 33
-        setCenter(GeoPoint(51.23020595, 4.41655480828479), "Campus Ellermanstraat")
+
+        setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
 
 
         val points = ArrayList<IGeoPoint>();
         val db = DatabaseHelper(requireContext(), null)
         val toilets = db.getToilets()
 
-        var hashMap : HashMap<Int, Toilet>
-                = HashMap<Int, Toilet> ()
+        var hash : HashMap<Int, Toilet> = HashMap()
         for ((counter, toilet) in toilets.withIndex()) {
 
-            hashMap[counter] = toilet
+            hash[counter] = toilet
 
             points.add(
                 LabelledGeoPoint(
@@ -158,21 +159,20 @@ class MapFragment : Fragment() {
             )
         }
 
-// wrap them in a theme
+
         val pt = SimplePointTheme(points, true);
 
-// create label style
+
         val textStyle = Paint();
-        textStyle.style = Paint.Style.FILL
+        textStyle.style = Paint.Style.STROKE
         textStyle.color = Color.parseColor("#0000ff")
         textStyle.textAlign = Paint.Align.CENTER
-        textStyle.textSize = 70F
+        textStyle.textSize = 23F
 
-// set some visual options for the overlay
-// we use here MAXIMUM_OPTIMIZATION algorithm, which works well with >100k points
+
         val opt = SimpleFastPointOverlayOptions.getDefaultStyle()
             .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
-            .setRadius(25F).setIsClickable(true).setCellSize(15).setTextStyle(textStyle);
+            .setRadius(25F).setIsClickable(true).setCellSize(10).setTextStyle(textStyle);
 
 // create the overlay with the theme
         val sfpo = SimpleFastPointOverlay(pt, opt);
@@ -187,11 +187,6 @@ class MapFragment : Fragment() {
 
 
         map?.overlays?.add(sfpo);
-
-
-
-
-
 
     }
 
