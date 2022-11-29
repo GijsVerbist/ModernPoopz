@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
     private var toilets: ArrayList<Toilet>? = null
+    var onItemClick: ((Toilet) -> Unit)? = null
 
     fun setToilets( toiletList: ArrayList<Toilet>) {
         this.toilets = toiletList
@@ -42,6 +43,9 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
             street.text = toilet.properties.STRAAT + " " +toilet.properties.HUISNUMMER
             postcode.text = toilet.properties.POSTCODE.toString()
+            view.setOnClickListener {
+                onItemClick?.invoke(toilets!![adapterPosition])
+            }
         }
 
 

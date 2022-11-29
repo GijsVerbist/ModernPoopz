@@ -1,13 +1,11 @@
 package com.example.modernpoopz
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListAdapter
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.modernpoopz.databinding.FragmentListBinding
@@ -54,6 +52,14 @@ class ListFragment : Fragment() {
         toiletAdapter = ToiletAdapter()
         recyclerview?.adapter = toiletAdapter
 
+        toiletAdapter?.onItemClick = {toilet ->
+            val intent = Intent(context, DetailView::class.java)
+            intent.putExtra("straat", toilet.properties.STRAAT)
+            intent.putExtra("huisnummer", toilet.properties.HUISNUMMER)
+            intent.putExtra("postcode", toilet.properties.POSTCODE)
+            context?.startActivity(intent)
+        }
+
         getToilets()
 
     }
@@ -61,5 +67,7 @@ class ListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 
 }
