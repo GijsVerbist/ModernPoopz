@@ -1,13 +1,10 @@
 package com.example.modernpoopz
 
-import android.content.Context
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -18,8 +15,8 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     var onItemClick: ((Toilet) -> Unit)? = null
 
     fun setToilets( toiletList: ArrayList<Toilet>) {
-        var sortedListOfperson = toiletList
-            .sortedWith <Toilet> (object : Comparator <Toilet> {
+        var sortedListOfToilets = toiletList
+            .sortedWith(object : Comparator <Toilet> {
                 override fun compare (t1: Toilet, t2: Toilet) : Int {
                     var distanceInKm1 = GetDistanceBetWeenPoints(t1)
                     var distanceInKm2 = GetDistanceBetWeenPoints(t2)
@@ -36,7 +33,7 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
                 }
             })
 
-        this.toilets = ArrayList(sortedListOfperson)
+        this.toilets = ArrayList(sortedListOfToilets)
         notifyDataSetChanged()
     }
 
@@ -63,7 +60,6 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
         private var distance = view.findViewById<TextView>(R.id.toilet_list_filter_distance)
 
         fun bindView(toilet: Toilet) {
-
             var tempStreetname = toilet.properties.STRAAT
             var tempNumber = toilet.properties.HUISNUMMER
             var tempPostcode = toilet.properties.POSTCODE
@@ -172,13 +168,13 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     fun GetDistanceBetWeenPoints(toilet:Toilet): Float {
 
         val distanceResult = FloatArray(1)
-        if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null) {
-
+        if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null && LocationHelper.lat != null && LocationHelper.long != null) {
             val toiletLat = toilet.geometry.coordinates[0]
             val toiletLong = toilet.geometry.coordinates[1]
-            android.location.Location.distanceBetween(
-                51.23020595,
-                4.41655480828479,
+
+            Location.distanceBetween(
+                MapFragment.userLat,
+                MapFragment.userLong,
                 toiletLat,
                 toiletLong,
                 distanceResult

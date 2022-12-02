@@ -84,11 +84,10 @@ class MapFragment : Fragment() {
     val LOCATION_PERMISSION_REQUEST_CODE = 1
     private val REQUEST_CHECK_SETTINGS: Int = 61124
 
-
-
-
-
-
+    companion object{
+        var userLat: Double = 51.23020595
+        var userLong: Double = 4.41655480828479
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -324,6 +323,8 @@ class MapFragment : Fragment() {
                             println("lat2!!" + location.latitude)
                             println("long2!!"+location.longitude)
                             LocationHelper.lat = location.latitude
+                            userLat = location.latitude
+                            userLong = location.longitude
                             LocationHelper.long = location.longitude
                             setCenter(
                                 GeoPoint(location.latitude, location.longitude), "user location"

@@ -133,7 +133,7 @@ class ListFragment : Fragment() {
                 for (toilet in toiletList!!){
                     var street = toilet.properties.STRAAT?.lowercase()
                     var postcode = toilet.properties.POSTCODE
-                    
+
                     if(street?.contains(newText.lowercase()) == true || postcode.toString().contains(newText.lowercase())){
 
                         if(selectedFilters.contains("all")){
