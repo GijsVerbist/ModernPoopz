@@ -2,37 +2,111 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/lijstView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
-    <TextView
-        android:id="@+id/toilet_list_detail"
-        android:layout_width="240dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="100dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/design_default_color_primary"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="8dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toilet_list_title" />
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <TextView
-        android:id="@+id/toilet_list_title"
-        android:layout_width="240dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        app:layout_constraintBottom_toTopOf="@+id/toilet_list_detail"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="Title" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/toilet_list_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="50dp"
+                android:text="Title"
+                android:textColor="@color/white"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/toilet_list_filter_payable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="17dp"
+                android:background="@drawable/rounder_corner_pay"
+                android:text="Payable"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/toilet_list_filter_target"
+                app:layout_constraintTop_toBottomOf="@+id/toilet_list_title"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/toilet_list_filter_target"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="17dp"
+                android:background="@drawable/rounder_corner"
+                android:text="Target"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toilet_list_title"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/toilet_list_filter_disabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="17dp"
+                android:background="@drawable/rounder_corner_dis"
+                android:text="Disabled"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/toilet_list_filter_payable"
+                app:layout_constraintTop_toBottomOf="@+id/toilet_list_title"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/toilet_list_filter_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/rounder_corner_distance"
+                android:text="Distance"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                app:layout_constraintStart_toEndOf="@+id/toilet_list_filter_disabled"
+                app:layout_constraintTop_toBottomOf="@+id/toilet_list_title" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

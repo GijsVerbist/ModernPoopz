@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
@@ -16,7 +18,25 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     var onItemClick: ((Toilet) -> Unit)? = null
 
     fun setToilets( toiletList: ArrayList<Toilet>) {
-        this.toilets = toiletList
+        var sortedListOfperson = toiletList
+            .sortedWith <Toilet> (object : Comparator <Toilet> {
+                override fun compare (t1: Toilet, t2: Toilet) : Int {
+                    var distanceInKm1 = GetDistanceBetWeenPoints(t1)
+                    var distanceInKm2 = GetDistanceBetWeenPoints(t2)
+
+                    if (distanceInKm1 > distanceInKm2){
+                        return 1
+                    }
+                    if (distanceInKm1 == distanceInKm2){
+                        return 0
+                    }
+                    else{
+                        return -1
+                    }
+                }
+            })
+
+        this.toilets = ArrayList(sortedListOfperson)
         notifyDataSetChanged()
     }
 
@@ -36,13 +56,79 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     }
 
     inner class CustomViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        private var street = view.findViewById<TextView>(R.id.toilet_list_title)
-        private var postcode = view.findViewById<TextView>(R.id.toilet_list_detail)
+        private var adres = view.findViewById<TextView>(R.id.toilet_list_title)
+        private var payable = view.findViewById<TextView>(R.id.toilet_list_filter_payable)
+        private var target = view.findViewById<TextView>(R.id.toilet_list_filter_target)
+        private var disabled = view.findViewById<TextView>(R.id.toilet_list_filter_disabled)
+        private var distance = view.findViewById<TextView>(R.id.toilet_list_filter_distance)
 
         fun bindView(toilet: Toilet) {
 
-            street.text = toilet.properties.STRAAT + " " +toilet.properties.HUISNUMMER
-            postcode.text = toilet.properties.POSTCODE.toString()
+            var tempStreetname = toilet.properties.STRAAT
+            var tempNumber = toilet.properties.HUISNUMMER
+            var tempPostcode = toilet.properties.POSTCODE
+            var tempPay = toilet.properties.BETALEND
+            var tempTarget = toilet.properties.DOELGROEP
+            var tempDisabled = toilet.properties.INTEGRAAL_TOEGANKELIJK
+
+            var distanceInKm = GetDistanceBetWeenPoints(toilet)
+
+            val df = DecimalFormat("#.#")
+            df.roundingMode = RoundingMode.DOWN
+            val roundoff = df.format(distanceInKm)
+            distance.text = roundoff + "km"
+
+
+            if(tempStreetname != null && tempNumber != null){
+
+                if (tempPostcode != null){
+                    adres.text = toilet.properties.STRAAT + " " +toilet.properties.HUISNUMMER + ", " + toilet.properties.POSTCODE
+                }
+                else{
+                    adres.text = toilet.properties.STRAAT + " " +toilet.properties.HUISNUMMER
+                }
+            }
+
+            if(tempPay != null){
+                if(tempPay == "ja") {
+                    payable.text = "Betalend"
+                }
+                else{
+                    payable.text = "Gratis"
+                }
+            }
+            else{
+                payable.text = " "
+            }
+
+            if(tempTarget != null){
+
+                if(tempTarget.contains("man/vrouw")){
+                    target.text = "Man/Vrouw"
+                }
+                else if (tempTarget.contains("vrouw")){
+                    target.text = "Vrouw"
+                }
+                else{
+                    target.text = "Man"
+                }
+            }
+            else{
+                target.text = " "
+            }
+
+            if(tempDisabled != null){
+                if(tempDisabled == "ja"){
+                    disabled.text = "Rolstoelvriendelijk"
+                }
+                else{
+                    disabled.text = " "
+                }
+            }
+            else{
+                disabled.text = " "
+            }
+
             view.setOnClickListener {
                 onItemClick?.invoke(toilets!![adapterPosition])
             }
@@ -83,6 +169,23 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
 
     }
 
+    fun GetDistanceBetWeenPoints(toilet:Toilet): Float {
 
+        val distanceResult = FloatArray(1)
+        if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null) {
+
+            val toiletLat = toilet.geometry.coordinates[0]
+            val toiletLong = toilet.geometry.coordinates[1]
+            android.location.Location.distanceBetween(
+                51.23020595,
+                4.41655480828479,
+                toiletLat,
+                toiletLong,
+                distanceResult
+            )
+
+        }
+        return distanceResult[0] / 1000
+    }
 
 }

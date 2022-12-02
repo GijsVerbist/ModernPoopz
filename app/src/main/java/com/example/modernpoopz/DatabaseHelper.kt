@@ -117,7 +117,7 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         var omschrijving: String?
         var doelgroep: String?
         var luiertafel: String?
-        var integraal_toegangelijk: String?
+        var integraal_toegankelijk: String?
 
 
         if(cursor.moveToFirst()) {
@@ -133,11 +133,11 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 omschrijving = cursor.getStringOrNull( cursor.getColumnIndex("omschrijving"))
                 doelgroep = cursor.getStringOrNull( cursor.getColumnIndex("doelgroep"))
                 luiertafel = cursor.getStringOrNull( cursor.getColumnIndex("luiertafel"))
-                integraal_toegangelijk = cursor.getStringOrNull( cursor.getColumnIndex("integraal_toegangelijk"))
+                integraal_toegankelijk = cursor.getStringOrNull( cursor.getColumnIndex("integraal_toegankelijk"))
 
                 val geometryArray = doubleArrayOf(latitude!!, longitude!!)
                 val toilet = Toilet(
-                    properties = Properties(objectId, street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegangelijk),
+                    properties = Properties(objectId, street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegankelijk),
                     geometry = Geometry(geometryArray),
                     id = 0 )
                 toilets.add(toilet)

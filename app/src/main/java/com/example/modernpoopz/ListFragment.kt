@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import android.widget.Button
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,15 @@ class ListFragment : Fragment() {
     private var toiletAdapter: ToiletAdapter? = null
     private var _binding: FragmentListBinding? = null
     private var databaseHelper: DatabaseHelper? = null
+    private var selectedFilters: ArrayList<String> = arrayListOf()
+    private var currentSearchText: String = ""
+    private var allButton: Button? = null
+    private var freeButton: Button? = null
+    private var maleButton: Button? = null
+    private var femaleButton: Button? = null
+    private var disabledButton: Button? = null
+    private var babyButton: Button? = null
+    private var searchView: SearchView? = null
 
     private val binding get() = _binding!!
 
@@ -67,12 +78,223 @@ class ListFragment : Fragment() {
 
         getToilets()
 
+        allButton = view?.findViewById(R.id.allFilter)
+        allButton?.setOnClickListener {
+            allFilterTapped(view)
+        }
+
+        freeButton = view?.findViewById(R.id.freeFilter)
+        freeButton?.setOnClickListener {
+            freeFilterTapped(view)
+        }
+
+        maleButton = view?.findViewById(R.id.maleFilter)
+        maleButton?.setOnClickListener {
+            maleFilterTapped(view)
+        }
+
+        femaleButton = view?.findViewById(R.id.femaleFilter)
+        femaleButton?.setOnClickListener {
+            femaleFilterTapped(view)
+        }
+
+        disabledButton = view?.findViewById(R.id.disabledFilter)
+        disabledButton?.setOnClickListener {
+            disabledFilterTapped(view)
+        }
+
+        babyButton = view?.findViewById(R.id.babyFilter)
+        babyButton?.setOnClickListener {
+            babyFilterTapped(view)
+        }
+
+        unSelectAllFilterButtons()
+        lookSelected(allButton)
+        selectedFilters.add("all")
+        initSearchWidgets()
+
     }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
+    fun initSearchWidgets(){
+        searchView = view?.findViewById(R.id.searchViewField)
+
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+            override fun onQueryTextChange(newText: String): Boolean {
+                currentSearchText = newText
+                val toiletList = databaseHelper?.getToilets()
+                val filterToiletsList = arrayListOf<Toilet>()
+                for (toilet in toiletList!!){
+                    var street = toilet.properties.STRAAT?.lowercase()
+                    var postcode = toilet.properties.POSTCODE
+
+                    val freeFilter = toilet.properties.BETALEND + "_freefilter"
+                    val maleFilter = toilet.properties.DOELGROEP
+                    val femaleFilter = toilet.properties.DOELGROEP
+                    val disabledFilter = toilet.properties.INTEGRAAL_TOEGANKELIJK + "_disabledfilter"
+                    val babyFilter = toilet.properties.LUIERTAFEL + "_babyfilter"
+
+                    if(street?.contains(newText.lowercase()) == true || postcode.toString().contains(newText.lowercase())){
+
+                        if(selectedFilters.contains("all")){
+                            if(!filterToiletsList.contains(toilet)){
+                                filterToiletsList.add(toilet)
+                            }
+                        }
+
+                        else{
+                            for(filter in selectedFilters){
+                                if(freeFilter.lowercase().contains(filter)){
+                                    if(!filterToiletsList.contains(toilet)){
+                                        filterToiletsList.add(toilet)
+                                    }
+                                }
+                                else if(maleFilter?.lowercase()?.contains(filter) == true){
+                                    if(!filterToiletsList.contains(toilet)){
+                                        filterToiletsList.add(toilet)
+                                    }
+                                }
+                                else if(femaleFilter?.lowercase()?.contains(filter) == true){
+                                    if(!filterToiletsList.contains(toilet)){
+                                        filterToiletsList.add(toilet)
+                                    }
+                                }
+                                else if(disabledFilter.lowercase().contains(filter)){
+                                    if(!filterToiletsList.contains(toilet)){
+                                        filterToiletsList.add(toilet)
+                                    }
+                                }
+                                else if(babyFilter.lowercase().contains(filter)){
+                                    if(!filterToiletsList.contains(toilet)){
+                                        filterToiletsList.add(toilet)
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                toiletAdapter?.setToilets(filterToiletsList)
+
+                return false
+            }
+        })
+    }
+
+    fun lookSelected(parsedButton:Button?){
+        parsedButton?.alpha = 1.0F
+    }
+
+    fun lookUnSelected(parsedButton: Button?){
+        parsedButton?.alpha = 0.5F
+    }
+
+    fun unSelectAllFilterButtons(){
+        lookUnSelected(freeButton)
+        lookUnSelected(maleButton)
+        lookUnSelected(femaleButton)
+        lookUnSelected(disabledButton)
+        lookUnSelected(babyButton)
+    }
+
+    fun filterList(status: String){
+
+        if(!selectedFilters.contains(status)){
+            selectedFilters.add(status)
+        }
+
+        val filterToiletsList = arrayListOf<Toilet>()
+        val toiletList = databaseHelper?.getToilets()
+
+        for (toilet in toiletList!!){
+
+            var street = toilet.properties.STRAAT?.lowercase()
+            var postcode = toilet.properties.POSTCODE
+
+            for(filter in selectedFilters){
+                var tempProp: String? = null
+                when (filter) {
+                    "nee_freefilter" -> {
+                        tempProp = toilet.properties.BETALEND + "_freefilter"
+                    }
+                    "man", "vrouw" -> {
+                        tempProp = toilet.properties.DOELGROEP
+                    }
+                    "ja_disabledfilter" -> {
+                        tempProp = toilet.properties.INTEGRAAL_TOEGANKELIJK + "_disabledfilter"
+                    }
+                    "ja_babyfilter" -> {
+                        tempProp = toilet.properties.LUIERTAFEL + "_babyfilter"
+                    }
+                }
+                if(tempProp?.lowercase()?.contains(filter) == true){
+                    if (currentSearchText == ""){
+                        if(!filterToiletsList.contains(toilet)){
+                            filterToiletsList.add(toilet)
+                        }
+                    }
+                    else{
+                        if(street?.contains(currentSearchText.lowercase()) == true || postcode.toString().contains(currentSearchText.lowercase())){
+                            if(!filterToiletsList.contains(toilet)){
+                                filterToiletsList.add(toilet)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        toiletAdapter?.setToilets(filterToiletsList)
+
+    }
+
+    fun allFilterTapped(view: View) {
+        selectedFilters.clear()
+        selectedFilters.add("all")
+        searchView?.setQuery("",false)
+        searchView?.clearFocus()
+
+        unSelectAllFilterButtons()
+        lookSelected(allButton)
+        getToilets()
+    }
+    fun freeFilterTapped(view: View) {
+        lookSelected(freeButton)
+        lookUnSelected(allButton)
+        selectedFilters.remove("all")
+        filterList("nee_freefilter")
+    }
+    fun maleFilterTapped(view: View) {
+        lookSelected(maleButton)
+        lookUnSelected(allButton)
+        selectedFilters.remove("all")
+        filterList("man")
+    }
+    fun femaleFilterTapped(view: View) {
+        lookSelected(femaleButton)
+        lookUnSelected(allButton)
+        selectedFilters.remove("all")
+        filterList("vrouw")
+    }
+    fun disabledFilterTapped(view: View) {
+        lookSelected(disabledButton)
+        lookUnSelected(allButton)
+        selectedFilters.remove("all")
+        filterList("ja_disabledfilter")
+    }
+    fun babyFilterTapped(view: View) {
+        lookSelected(babyButton)
+        lookUnSelected(allButton)
+        selectedFilters.remove("all")
+        filterList("ja_babyfilter")
+    }
 
 
 

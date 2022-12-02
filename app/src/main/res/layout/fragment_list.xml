@@ -10,14 +10,117 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recipe_list_view"
         android:layout_width="381dp"
-        android:layout_height="718dp"
+        android:layout_height="530dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="256dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/filter_row_1"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <SearchView
+        android:id="@+id/searchViewField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:queryHint="Adres zoeken"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></SearchView>
+
+    <LinearLayout
+        android:id="@+id/filter_row_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchViewField">
+
+
+        <Button
+            android:id="@+id/allFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/pink"
+            android:onClick="allFilterTapped"
+            android:text="Reset"
+            android:textColor="@color/white"></Button>
+
+        <Button
+            android:id="@+id/freeFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:onClick="freeFilterTapped"
+            android:backgroundTint="@color/pink"
+            android:textColor="@color/white"
+            android:text="Gratis"></Button>
+
+        <Button
+            android:id="@+id/maleFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:onClick="maleFilterTapped"
+            android:backgroundTint="@color/pink"
+            android:textColor="@color/white"
+            android:text="Man"></Button>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@color/teal_200"
+        app:layout_constraintTop_toBottomOf="@+id/filter_row_1">
+
+
+        <Button
+            android:id="@+id/femaleFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:onClick="femaleFilterTapped"
+            android:backgroundTint="@color/pink"
+            android:textColor="@color/white"
+            android:text="Vrouw"></Button>
+
+        <Button
+            android:id="@+id/disabledFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:onClick="disabledFilterTapped"
+            android:backgroundTint="@color/pink"
+            android:textColor="@color/white"
+            android:text="IT"></Button>
+
+        <Button
+            android:id="@+id/babyFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:onClick="babyFilterTapped"
+            android:backgroundTint="@color/pink"
+            android:textColor="@color/white"
+            android:text="Baby"></Button>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
