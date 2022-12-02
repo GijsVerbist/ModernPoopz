@@ -133,13 +133,7 @@ class ListFragment : Fragment() {
                 for (toilet in toiletList!!){
                     var street = toilet.properties.STRAAT?.lowercase()
                     var postcode = toilet.properties.POSTCODE
-
-                    val freeFilter = toilet.properties.BETALEND + "_freefilter"
-                    val maleFilter = toilet.properties.DOELGROEP
-                    val femaleFilter = toilet.properties.DOELGROEP
-                    val disabledFilter = toilet.properties.INTEGRAAL_TOEGANKELIJK + "_disabledfilter"
-                    val babyFilter = toilet.properties.LUIERTAFEL + "_babyfilter"
-
+                    
                     if(street?.contains(newText.lowercase()) == true || postcode.toString().contains(newText.lowercase())){
 
                         if(selectedFilters.contains("all")){
@@ -150,27 +144,22 @@ class ListFragment : Fragment() {
 
                         else{
                             for(filter in selectedFilters){
-                                if(freeFilter.lowercase().contains(filter)){
-                                    if(!filterToiletsList.contains(toilet)){
-                                        filterToiletsList.add(toilet)
+                                var tempProp: String? = null
+                                when (filter) {
+                                    "nee_freefilter" -> {
+                                        tempProp = toilet.properties.BETALEND + "_freefilter"
+                                    }
+                                    "man", "vrouw" -> {
+                                        tempProp = toilet.properties.DOELGROEP
+                                    }
+                                    "ja_disabledfilter" -> {
+                                        tempProp = toilet.properties.INTEGRAAL_TOEGANKELIJK + "_disabledfilter"
+                                    }
+                                    "ja_babyfilter" -> {
+                                        tempProp = toilet.properties.LUIERTAFEL + "_babyfilter"
                                     }
                                 }
-                                else if(maleFilter?.lowercase()?.contains(filter) == true){
-                                    if(!filterToiletsList.contains(toilet)){
-                                        filterToiletsList.add(toilet)
-                                    }
-                                }
-                                else if(femaleFilter?.lowercase()?.contains(filter) == true){
-                                    if(!filterToiletsList.contains(toilet)){
-                                        filterToiletsList.add(toilet)
-                                    }
-                                }
-                                else if(disabledFilter.lowercase().contains(filter)){
-                                    if(!filterToiletsList.contains(toilet)){
-                                        filterToiletsList.add(toilet)
-                                    }
-                                }
-                                else if(babyFilter.lowercase().contains(filter)){
+                                if(tempProp?.lowercase()?.contains(filter) == true){
                                     if(!filterToiletsList.contains(toilet)){
                                         filterToiletsList.add(toilet)
                                     }
