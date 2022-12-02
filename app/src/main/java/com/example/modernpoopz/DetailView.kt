@@ -25,14 +25,25 @@ class DetailView : AppCompatActivity() {
 
         val postcode = intent.getIntExtra("postcode", 0)
 
+        val lat = intent.getDoubleExtra("lat", 0.0)
+
+        val long = intent.getDoubleExtra("long", 0.0)
+
+
 
 
         val straatText: TextView = findViewById(R.id.Straat)
 
         val postcodeText: TextView = findViewById(R.id.Postcode)
 
+        val latText: TextView = findViewById(R.id.lat)
+
+        val longText: TextView = findViewById(R.id.longg)
+
         straatText.text = straat + " " + huisnummer
         postcodeText.text = postcode.toString()
+        latText.text = lat.toString()
+        longText.text = long.toString()
        //val fragment = MapFragment()
        //buttonTest.setOnClickListener {supportFragmentManager.beginTransaction().replace(R.id.actualmapview, fragment).commit() }
 

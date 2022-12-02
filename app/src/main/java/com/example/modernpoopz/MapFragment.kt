@@ -17,6 +17,7 @@ import android.graphics.Paint
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.service.quicksettings.Tile
 import android.util.Log
@@ -36,6 +37,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.example.modernpoopz.databinding.FragmentMapBinding
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import okhttp3.OkHttpClient
@@ -76,10 +78,11 @@ class MapFragment : Fragment() {
 
     var PERMISSION_ID = 1
     private var  _binding: FragmentMapBinding? = null
-    private lateinit var LocationClient: FusedLocationProviderClient
+    private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     val LOCATION_PERMISSION_REQUEST_CODE = 1
+    private val REQUEST_CHECK_SETTINGS: Int = 61124
 
 
 
@@ -89,11 +92,20 @@ class MapFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
+
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        locationRequest = LocationRequest.create().apply {
+            interval = 10000
+            fastestInterval = 5000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
         return inflater.inflate(R.layout.fragment_map, container, false)
+
+
 
     }
 
@@ -127,7 +139,8 @@ class MapFragment : Fragment() {
         }
 
         if (locationPermission()) {
-            giveMap()
+
+            getLocation()
 
         }
         else {
@@ -139,6 +152,7 @@ class MapFragment : Fragment() {
                 ), 100
             )
         }
+        giveMap()
 
     }
 
@@ -155,7 +169,7 @@ class MapFragment : Fragment() {
 
         map?.controller?.setZoom(17.0)
 
-        setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
+      //  setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
 
 
         val points = ArrayList<IGeoPoint>();
@@ -288,24 +302,73 @@ class MapFragment : Fragment() {
             }
         }
     }
+    private fun getLocation() {
+        locationClient =
+            LocationServices.getFusedLocationProviderClient(context?.applicationContext!!)
 
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
 
-    fun getLocation(){
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED )
-        {
-            this.activity?.let {
-                ActivityCompat.requestPermissions(
-                    it,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+        val client: SettingsClient = LocationServices.getSettingsClient(requireActivity())
+        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+
+                    for (location in locationResult.locations) {
+                        println("lat!!" + location.latitude)
+                        println("long!!"+location.longitude)
+                        if (location.latitude != null && location.longitude != null) {
+                            println("lat2!!" + location.latitude)
+                            println("long2!!"+location.longitude)
+                            LocationHelper.lat = location.latitude
+                            LocationHelper.long = location.longitude
+                            setCenter(
+                                GeoPoint(location.latitude, location.longitude), "user location"
+                            )
+                            stopUpdates()
+                        }
+
+                    }
+                }
             }
-            return
-
+            startUpdates()
 
         }
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+
+                try {
+
+                    exception.startResolutionForResult(
+                        requireActivity(),
+                        REQUEST_CHECK_SETTINGS
+                    )
+                } catch (sendEx: IntentSender.SendIntentException) {
+
+
+
+                }
+            }
+        }
+    }
+    @SuppressLint("MissingPermission")
+    private fun startUpdates() {
+        locationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    private fun stopUpdates() {
+        locationClient.removeLocationUpdates(locationCallback)
+    }
 
 
 
     }
 
-}
 

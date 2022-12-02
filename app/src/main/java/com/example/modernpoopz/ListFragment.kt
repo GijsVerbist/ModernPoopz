@@ -60,6 +60,8 @@ class ListFragment : Fragment() {
             intent.putExtra("straat", toilet.properties.STRAAT)
             intent.putExtra("huisnummer", toilet.properties.HUISNUMMER)
             intent.putExtra("postcode", toilet.properties.POSTCODE)
+            intent.putExtra("lat", LocationHelper.lat)
+            intent.putExtra("long", LocationHelper.long)
             context?.startActivity(intent)
         }
 
