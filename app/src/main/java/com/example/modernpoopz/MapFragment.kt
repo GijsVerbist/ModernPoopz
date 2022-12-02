@@ -10,9 +10,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -27,10 +29,15 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.example.modernpoopz.databinding.FragmentMapBinding
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -51,7 +58,9 @@ import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import java.io.File
 import java.net.URL
 import java.net.URLEncoder
+
 import java.util.ArrayList
+
 
 
 class MapFragment : Fragment() {
@@ -61,12 +70,22 @@ class MapFragment : Fragment() {
     private var items = ArrayList<OverlayItem>()
     private var searchField: EditText? = null
     private var searchButton: Button? = null
-    private var clearButton: Button? = null
     private val urlNominatim = "https://nominatim.openstreetmap.org/"
     private var notificationManager: NotificationManager? = null
     private var mChannel: NotificationChannel? = null
 
+    var PERMISSION_ID = 1
     private var  _binding: FragmentMapBinding? = null
+    private lateinit var LocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    val LOCATION_PERMISSION_REQUEST_CODE = 1
+
+
+
+
+
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -75,12 +94,15 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_map, container, false)
+
     }
 
     @SuppressLint("Range")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View,savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         val osmConfig = Configuration.getInstance()
         osmConfig.userAgentValue = activity?.packageName
@@ -100,26 +122,18 @@ class MapFragment : Fragment() {
                 ) + "&format=json"
             )
             it.hideKeyboard()
-            //val task = MyAsyncTask()
-            //task.execute(url)
+
             getAddressOrLocation(url)
         }
 
-       /* clearButton = view?.findViewById(R.id.clear_button)
-        clearButton?.setOnClickListener {
-            map?.overlays?.clear()
-            // Redraw map
-            map?.invalidate()
-        }
-*/
-        // Permissions
-        if (hasPermissions()) {
+        if (locationPermission()) {
             giveMap()
+
         }
         else {
+            defaultLocation()
             ActivityCompat.requestPermissions(
                 requireActivity(), arrayOf(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ), 100
@@ -128,7 +142,10 @@ class MapFragment : Fragment() {
 
     }
 
+    private fun defaultLocation(){
+        setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
 
+    }
 
     private fun giveMap(){
 
@@ -174,17 +191,7 @@ class MapFragment : Fragment() {
             .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
             .setRadius(25F).setIsClickable(true).setCellSize(10).setTextStyle(textStyle);
 
-// create the overlay with the theme
         val sfpo = SimpleFastPointOverlay(pt, opt);
-
-
-        /*sfpo.setOnClickListener { pointAdapter: SimpleFastPointOverlay.PointAdapter, i: Int ->
-            val intent = Intent(requireContext(), PopUpActivity::class.java)
-
-            intent.putExtra("popuptitle",hashMap[i]!!.properties.STRAAT)
-            startActivity(intent)
-        }*/
-
 
         map?.overlays?.add(sfpo);
 
@@ -200,12 +207,8 @@ class MapFragment : Fragment() {
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
-    private fun hasPermissions(): Boolean {
+    private fun locationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED &&
@@ -215,13 +218,15 @@ class MapFragment : Fragment() {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
+
+
     private fun addMarker(geoPoint: GeoPoint, name: String) {
         items.add(OverlayItem(name, name, geoPoint))
         mMyLocationOverlay = ItemizedIconOverlay(items, null, view?.context)
         map?.overlays?.add(mMyLocationOverlay)
     }
 
-    private fun setCenter(geoPoint: GeoPoint, name: String) {
+    open fun setCenter(geoPoint: GeoPoint, name: String) {
         map?.controller?.setCenter(geoPoint)
         addMarker(geoPoint, name)
     }
@@ -250,12 +255,6 @@ class MapFragment : Fragment() {
                 if (searchReverse) {
                     val obj = parser.parse(jsonString) as JsonObject
 
-                    /*createNotification(
-                        nielsvandepoel.be.kotslin.R.drawable.ic_menu_compass,
-                        "Reverse lookup result",
-                        obj.string("display_name")!!,
-                        "my_channel_01"
-                    )*/
                 } else {
                     val array = parser.parse(jsonString) as JsonArray<JsonObject>
 
@@ -279,6 +278,34 @@ class MapFragment : Fragment() {
         }).start()
     }
 
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+
+        if (requestCode == PERMISSION_ID) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Granted. Start getting the location information
+            }
+        }
+    }
+
+
+    fun getLocation(){
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED )
+        {
+            this.activity?.let {
+                ActivityCompat.requestPermissions(
+                    it,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            }
+            return
+
+
+        }
+
+
+
+    }
 
 }
 

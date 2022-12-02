@@ -1,8 +1,12 @@
 package com.example.modernpoopz
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ListView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.beust.klaxon.*
 import com.example.modernpoopz.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,7 +34,17 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        getToiletsFromApi(this)
+
+        //needed for sqllite etc
+        if(storagePermission()){
+            getToiletsFromApi(this)
+
+        }else{
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), 100)
+        }
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -48,6 +62,12 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+    }
+    private fun storagePermission(): Boolean{
+        return ContextCompat.checkSelfPermission(
+            applicationContext,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE )== PackageManager.PERMISSION_GRANTED
 
     }
 }

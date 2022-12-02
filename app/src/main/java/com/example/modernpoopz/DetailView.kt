@@ -4,6 +4,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
+import androidx.navigation.NavDeepLinkBuilder
+import org.osmdroid.util.GeoPoint
 
 
 class DetailView : AppCompatActivity() {
@@ -20,7 +25,6 @@ class DetailView : AppCompatActivity() {
 
         val postcode = intent.getIntExtra("postcode", 0)
 
-        val buttonTest: Button = findViewById(R.id.buttonz)
 
 
         val straatText: TextView = findViewById(R.id.Straat)
@@ -29,10 +33,33 @@ class DetailView : AppCompatActivity() {
 
         straatText.text = straat + " " + huisnummer
         postcodeText.text = postcode.toString()
-       // val fragment = MapFragment()
-       // buttonTest.setOnClickListener {supportFragmentManager.beginTransaction().replace(R.id.actualmapview, fragment).commit() }
+       //val fragment = MapFragment()
+       //buttonTest.setOnClickListener {supportFragmentManager.beginTransaction().replace(R.id.actualmapview, fragment).commit() }
+
+        /*buttonTest.setOnClickListener {
+            supportFragmentManager.commit {
+                replace<MapFragment>(R.id.actualmapview, "mapTag")
+
+            }
+        }
+
+
+        /*val fragment: MapFragment? = MapFragment()
+
+        val pendingIntent = NavDeepLinkBuilder(this.applicationContext)
+            .setGraph(R.navigation.navigation)
+            .setDestination(R.id.navigation_map)
+            .createPendingIntent()
+
+        buttonTest.setOnClickListener { pendingIntent.send() }
+        */
+        */
+
+
+
+
+
 
     }
-
-
 }
+
