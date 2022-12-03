@@ -168,7 +168,7 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     fun GetDistanceBetWeenPoints(toilet:Toilet): Float {
 
         val distanceResult = FloatArray(1)
-        if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null && LocationHelper.lat != null && LocationHelper.long != null) {
+        if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null && MapFragment.userLat != null && MapFragment.userLong != null) {
             val toiletLat = toilet.geometry.coordinates[0]
             val toiletLong = toilet.geometry.coordinates[1]
 

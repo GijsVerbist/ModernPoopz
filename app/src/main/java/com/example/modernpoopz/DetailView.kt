@@ -1,5 +1,6 @@
 package com.example.modernpoopz
 
+import android.location.Location
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -9,6 +10,10 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.navigation.NavDeepLinkBuilder
 import org.osmdroid.util.GeoPoint
+import org.w3c.dom.Text
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.util.*
 
 
 class DetailView : AppCompatActivity() {
@@ -18,32 +23,129 @@ class DetailView : AppCompatActivity() {
 
 
 
-
-        val straat = intent.getStringExtra("straat")
-
-        val huisnummer = intent.getStringExtra("huisnummer")
-
-        val postcode = intent.getIntExtra("postcode", 0)
-
+        //Toiletdata
+        val street = intent.getStringExtra("straat")
+        val houseNumber = intent.getStringExtra("huisnummer")
+        val postalCode = intent.getIntExtra("postcode", 0)
+        val betalend = intent.getStringExtra("betalend")
+        val disabled = intent.getStringExtra("disabled")
+        val target = intent.getStringExtra("target")
+        val description = intent.getStringExtra("description")
+        val category = intent.getStringExtra("category")
         val lat = intent.getDoubleExtra("lat", 0.0)
-
         val long = intent.getDoubleExtra("long", 0.0)
 
+        //Textfields
+        val addressText: TextView = findViewById(R.id.detail_toilet_list_title)
+        val targetText: TextView = findViewById(R.id.detail_toilet_list_filter_target)
+        val payableText: TextView = findViewById(R.id.detail_toilet_list_filter_payable)
+        val disabledText: TextView = findViewById(R.id.detail_toilet_list_filter_disabled)
+        val categoryText: TextView = findViewById(R.id.detail_category_text)
+        val descriptionText: TextView = findViewById(R.id.detail_omschrijving_text)
+        val distanceText: TextView = findViewById(R.id.detail_toilet_list_filter_distance)
+
+        if(street != null && houseNumber != null){
+
+            if (postalCode != null){
+                addressText.text = "$street $houseNumber, $postalCode"
+            }
+            else{
+                addressText.text = "$street $houseNumber"
+            }
+        }
+
+        if(betalend != null){
+            if(betalend == "ja") {
+                payableText.text = "Betalend"
+            }
+            else{
+                payableText.text = "Gratis"
+            }
+        }
+        else{
+            payableText.text = " "
+        }
+
+        if(target != null){
+
+            if(target.contains("man/vrouw")){
+                targetText.text = "Man/Vrouw"
+            }
+            else if (target.contains("vrouw")){
+                targetText.text = "Vrouw"
+            }
+            else{
+                targetText.text = "Man"
+            }
+        }
+        else{
+            targetText.text = " "
+        }
+
+        if(disabled != null){
+            if(disabled == "ja"){
+                disabledText.text = "Rolstoelvriendelijk"
+            }
+            else{
+                disabledText.text = " "
+            }
+        }
+        else{
+            disabledText.text = " "
+        }
+
+        if (category != null){
+            categoryText.text = category.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.ROOT
+                ) else it.toString()
+            }
+        }
+        else{
+            categoryText.text = "Geen categorie gevonden voor deze locatie"
+        }
+
+        if (description != null){
+            descriptionText.text = description
+        }
+        else{
+            descriptionText.text = "Geen omschrijving gevonden voor deze locatie"
+        }
 
 
+        val distanceResult = FloatArray(1)
+        if (lat != null && long != null && MapFragment.userLat != null && MapFragment.userLat != null) {
 
-        val straatText: TextView = findViewById(R.id.Straat)
+            Location.distanceBetween(
+                MapFragment.userLat,
+                MapFragment.userLong,
+                lat,
+                long,
+                distanceResult
+            )
 
-        val postcodeText: TextView = findViewById(R.id.Postcode)
+            var distanceInKm = distanceResult[0] / 1000
+            val df = DecimalFormat("#.#")
+            df.roundingMode = RoundingMode.DOWN
+            val roundoff = df.format(distanceInKm)
+            distanceText.text = roundoff + "km"
+        }
+        else{
+            distanceText.text = " "
+        }
 
-        val latText: TextView = findViewById(R.id.lat)
+        println("Coord")
+        println(MapFragment.userLat)
+        println(MapFragment.userLong)
+        println(lat)
+        println(long)
 
-        val longText: TextView = findViewById(R.id.longg)
 
-        straatText.text = straat + " " + huisnummer
-        postcodeText.text = postcode.toString()
-        latText.text = lat.toString()
-        longText.text = long.toString()
+        var back_buton: Button = findViewById(R.id.detail_back_button)
+        back_buton.setOnClickListener{
+            finish()
+        }
+
        //val fragment = MapFragment()
        //buttonTest.setOnClickListener {supportFragmentManager.beginTransaction().replace(R.id.actualmapview, fragment).commit() }
 

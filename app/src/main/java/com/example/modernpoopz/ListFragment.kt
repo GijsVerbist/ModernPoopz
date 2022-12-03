@@ -71,8 +71,16 @@ class ListFragment : Fragment() {
             intent.putExtra("straat", toilet.properties.STRAAT)
             intent.putExtra("huisnummer", toilet.properties.HUISNUMMER)
             intent.putExtra("postcode", toilet.properties.POSTCODE)
-            intent.putExtra("lat", LocationHelper.lat)
-            intent.putExtra("long", LocationHelper.long)
+            intent.putExtra("betalend", toilet.properties.BETALEND)
+            intent.putExtra("disabled", toilet.properties.INTEGRAAL_TOEGANKELIJK)
+            intent.putExtra("target", toilet.properties.DOELGROEP)
+            intent.putExtra("description", toilet.properties.OMSCHRIJVING)
+            intent.putExtra("category", toilet.properties.CATEGORIE)
+
+            if(toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates[1]!! != null){
+                intent.putExtra("lat", toilet.geometry.coordinates[0])
+                intent.putExtra("long", toilet.geometry.coordinates[1])
+            }
             context?.startActivity(intent)
         }
 
