@@ -30,13 +30,17 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 OMSCHRIJVING_COL + " TEXT, " +
                 DOELGROEP_COL + " TEXT, " +
                 INTEGRAAL_TOEGANKELIJK_COL + " TEXT, " +
-                LUIERTAFEL_COL + " TEXT" +
+                LUIERTAFEL_COL + " TEXT, " +
+                OPENINGSUREN_OPM_COL + " TEXT, " +
+                CONTACTGEGEVENS_COL + " TEXT, " +
+                EXTRA_INFORMATIE_COL + " TEXT" +
                  ")"
                 )
 
         db.execSQL(first_query)
 
-
+//
+        //
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
@@ -62,6 +66,9 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         doelgroep: String?,
         integraal_toegankelijk: String?,
         luiertafel: String?,
+        extra_informatie: String?,
+        contactgegevens: String?,
+        openingsuren: String?
        // type: String?
     ){
 
@@ -79,6 +86,9 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         values.put(DOELGROEP_COL, doelgroep)
         values.put(INTEGRAAL_TOEGANKELIJK_COL, integraal_toegankelijk)
         values.put(LUIERTAFEL_COL, luiertafel)
+        values.put(EXTRA_INFORMATIE_COL, extra_informatie)
+        values.put(CONTACTGEGEVENS_COL, contactgegevens)
+        values.put(OPENINGSUREN_OPM_COL, openingsuren)
         //values.put(TYPE_COL, type)
 
         val database = this.writableDatabase
@@ -118,26 +128,33 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         var doelgroep: String?
         var luiertafel: String?
         var integraal_toegankelijk: String?
+        var extra_informatie:String?
+        var openingsuren:String?
+        var contactgegevens:String?
 
 
         if(cursor.moveToFirst()) {
             do{
-                street = cursor.getStringOrNull( cursor.getColumnIndex("straat"))
-                objectId = cursor.getIntOrNull( cursor.getColumnIndex("objectid"))
-                paying = cursor.getStringOrNull( cursor.getColumnIndex("betalend"))
-                housenumber = cursor.getStringOrNull( cursor.getColumnIndex("huisnummer"))
-                postcode = cursor.getIntOrNull( cursor.getColumnIndex("postcode"))
-                longitude = cursor.getDoubleOrNull( cursor.getColumnIndex("longitude"))
-                latitude = cursor.getDoubleOrNull( cursor.getColumnIndex("latitude"))
-                category = cursor.getStringOrNull( cursor.getColumnIndex("categorie"))
-                omschrijving = cursor.getStringOrNull( cursor.getColumnIndex("omschrijving"))
-                doelgroep = cursor.getStringOrNull( cursor.getColumnIndex("doelgroep"))
-                luiertafel = cursor.getStringOrNull( cursor.getColumnIndex("luiertafel"))
-                integraal_toegankelijk = cursor.getStringOrNull( cursor.getColumnIndex("integraal_toegankelijk"))
+                street = cursor.getStringOrNull( cursor.getColumnIndex(STREET_COL))
+                objectId = cursor.getIntOrNull( cursor.getColumnIndex(OBJECTID_COL))
+                paying = cursor.getStringOrNull( cursor.getColumnIndex(PAYING_COL))
+                housenumber = cursor.getStringOrNull( cursor.getColumnIndex(HOUSENUMBER_COL))
+                postcode = cursor.getIntOrNull( cursor.getColumnIndex(POSTCODE_COL))
+                longitude = cursor.getDoubleOrNull( cursor.getColumnIndex(LONG_COL))
+                latitude = cursor.getDoubleOrNull( cursor.getColumnIndex(LAT_COL))
+                category = cursor.getStringOrNull( cursor.getColumnIndex(CATEGORY_COL))
+                omschrijving = cursor.getStringOrNull( cursor.getColumnIndex(OMSCHRIJVING_COL))
+                doelgroep = cursor.getStringOrNull( cursor.getColumnIndex(DOELGROEP_COL))
+                luiertafel = cursor.getStringOrNull( cursor.getColumnIndex(LUIERTAFEL_COL))
+                integraal_toegankelijk = cursor.getStringOrNull( cursor.getColumnIndex(INTEGRAAL_TOEGANKELIJK_COL))
+                extra_informatie = cursor.getStringOrNull( cursor.getColumnIndex( EXTRA_INFORMATIE_COL))
+                contactgegevens = cursor.getStringOrNull( cursor.getColumnIndex(CONTACTGEGEVENS_COL))
+                openingsuren = cursor.getStringOrNull( cursor.getColumnIndex(OPENINGSUREN_OPM_COL))
+
 
                 val geometryArray = doubleArrayOf(latitude!!, longitude!!)
                 val toilet = Toilet(
-                    properties = Properties(objectId, street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegankelijk),
+                    properties = Properties(objectId, street, housenumber, postcode, paying, category, omschrijving, doelgroep, luiertafel, integraal_toegankelijk,extra_informatie, contactgegevens, openingsuren),
                     geometry = Geometry(geometryArray),
                     id = 0 )
                 toilets.add(toilet)
@@ -173,7 +190,7 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         private val DATABASE_NAME = "ModernPoopz"
 
 
-        private var DATABASE_VERSION = 20
+        private var DATABASE_VERSION = 29
 
         val TABLE_NAME = "Toilets"
 
@@ -202,6 +219,14 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val INTEGRAAL_TOEGANKELIJK_COL = "integraal_toegankelijk"
 
         val LUIERTAFEL_COL = "luiertafel"
+
+        val CONTACTGEGEVENS_COL = "contactgegevens"
+
+        val EXTRA_INFORMATIE_COL = "EXTRA_INFO_PUBLIEK"
+
+        val OPENINGSUREN_OPM_COL = "OPENINGSUREN_OPM"
+
+
 
         val TYPE_COL = "type"
     }

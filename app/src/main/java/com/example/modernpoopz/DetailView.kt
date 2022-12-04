@@ -34,6 +34,9 @@ class DetailView : AppCompatActivity() {
         val category = intent.getStringExtra("category")
         val lat = intent.getDoubleExtra("lat", 0.0)
         val long = intent.getDoubleExtra("long", 0.0)
+        val extra_informatie = intent.getStringExtra("extra_informatie")
+        val openingsuren = intent.getStringExtra("openingsuren")
+        val contactgegevens = intent.getStringExtra("contactgegevens")
 
         //Textfields
         val addressText: TextView = findViewById(R.id.detail_toilet_list_title)
@@ -42,6 +45,9 @@ class DetailView : AppCompatActivity() {
         val disabledText: TextView = findViewById(R.id.detail_toilet_list_filter_disabled)
         val categoryText: TextView = findViewById(R.id.detail_category_text)
         val descriptionText: TextView = findViewById(R.id.detail_omschrijving_text)
+        val extraInfoText: TextView = findViewById(R.id.detail_extraInfo_text)
+        val openingsurenText: TextView = findViewById(R.id.detail_openingsuren_text)
+        val contactgegevensText: TextView = findViewById(R.id.detail_contactgegevens_text)
         val distanceText: TextView = findViewById(R.id.detail_toilet_list_filter_distance)
 
         if(street != null && houseNumber != null){
@@ -110,6 +116,27 @@ class DetailView : AppCompatActivity() {
         }
         else{
             descriptionText.text = "Geen omschrijving gevonden voor deze locatie"
+        }
+
+        if (extra_informatie != null){
+            extraInfoText.text = extra_informatie
+        }
+        else{
+            extraInfoText.text = "Geen extra informatie gevonden voor deze locatie"
+        }
+
+        if (openingsuren != null){
+            openingsurenText.text = openingsuren
+        }
+        else{
+            openingsurenText.text = "Geen openingsuren gevonden voor deze locatie"
+        }
+
+        if (contactgegevens != null){
+            contactgegevensText.text = contactgegevens
+        }
+        else{
+            contactgegevensText.text = "Geen contact gegevens gevonden voor deze locatie"
         }
 
 

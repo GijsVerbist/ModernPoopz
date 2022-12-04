@@ -123,12 +123,51 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/Omschrijving"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
                 android:layout_marginTop="170dp"
                 android:text="Omschrijving"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ExtraInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="240dp"
+                android:text="Extra informatie"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/Openingsuren"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="310dp"
+                android:text="Openingsuren"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/Contactgegevens"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="380dp"
+                android:text="Contactgegevens"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -159,7 +198,49 @@
                 android:textSize="16sp"
                 android:textStyle="italic"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/Omschrijving" />
+
+
+            <TextView
+                android:id="@+id/detail_extraInfo_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="5dp"
+                android:text="tekst_extra_info"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ExtraInfo" />
+
+            <TextView
+                android:id="@+id/detail_openingsuren_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="5dp"
+                android:text="tekst_openingsuren"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/Openingsuren" />
+
+            <TextView
+                android:id="@+id/detail_contactgegevens_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="5dp"
+                android:text="tekst_contactgegevens"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/Contactgegevens" />
+
+
 
             <Button
                 android:id="@+id/detail_back_button"

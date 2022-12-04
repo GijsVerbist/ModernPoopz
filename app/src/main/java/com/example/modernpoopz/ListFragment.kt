@@ -76,6 +76,9 @@ class ListFragment : Fragment() {
             intent.putExtra("target", toilet.properties.DOELGROEP)
             intent.putExtra("description", toilet.properties.OMSCHRIJVING)
             intent.putExtra("category", toilet.properties.CATEGORIE)
+            intent.putExtra("extra_informatie", toilet.properties.EXTRA_INFO_PUBLIEK)
+            intent.putExtra("openingsuren", toilet.properties.OPENINGSUREN_OPM)
+            intent.putExtra("contactgegevens", toilet.properties.CONTACTGEGEVENS)
 
             if(toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates[1]!! != null){
                 intent.putExtra("lat", toilet.geometry.coordinates[0])

@@ -37,8 +37,9 @@ class Toilets(
 
 
                         val json = response.body!!.string()
-
+                        println("JSON!: " + json)
                         val gson = GsonBuilder().create()
+                        println("GSON!: " + gson)
                         val toilets = gson.fromJson(json, Toilets::class.java)
 
                         val database = DatabaseHelper(activity, null)
@@ -59,6 +60,9 @@ class Toilets(
                                     toilet.properties.DOELGROEP,
                                     toilet.properties.INTEGRAAL_TOEGANKELIJK,
                                     toilet.properties.LUIERTAFEL,
+                                    toilet.properties.EXTRA_INFO_PUBLIEK,
+                                    toilet.properties.CONTACTGEGEVENS,
+                                    toilet.properties.OPENINGSUREN_OPM
                                     //toilet.properties.type
                                 )
                             }else(println("${toilet.properties.OBJECTID} is een duplicate!"))
@@ -87,6 +91,9 @@ class Properties(
     var DOELGROEP: String?,
     var LUIERTAFEL: String?,
     var INTEGRAAL_TOEGANKELIJK: String?,
+    var EXTRA_INFO_PUBLIEK: String?,
+    var CONTACTGEGEVENS: String?,
+    var OPENINGSUREN_OPM: String?
  //   var type: String?
 )
 
