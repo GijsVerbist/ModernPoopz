@@ -36,6 +36,7 @@ import androidx.fragment.app.commit
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.example.modernpoopz.Toilets.Companion.getToiletsFromApi
 import com.example.modernpoopz.databinding.FragmentMapBinding
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -140,6 +141,9 @@ class MapFragment : Fragment() {
         if (locationPermission()) {
 
             getLocation()
+            if(storagePermission()){
+                this.activity?.let { getToiletsFromApi(it) }
+            }
 
         }
         else {
@@ -147,11 +151,21 @@ class MapFragment : Fragment() {
             ActivityCompat.requestPermissions(
                 requireActivity(), arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ), 100
             )
         }
         giveMap()
+
+    }
+
+    private fun storagePermission(): Boolean{
+        return context?.let {
+            ContextCompat.checkSelfPermission(
+                it,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE )
+        } == PackageManager.PERMISSION_GRANTED
 
     }
 

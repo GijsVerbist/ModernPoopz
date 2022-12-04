@@ -36,8 +36,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //needed for sqllite etc
-        if(storagePermission()){
-            getToiletsFromApi(this)
+       /* if(storagePermission()){
+            //getToiletsFromApi(this)
 
         }else{
             ActivityCompat.requestPermissions(
@@ -45,14 +45,15 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ), 100)
         }
-
+        getToiletsFromApi(this)
+*/
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_map, R.id.navigation_home
+                R.id.navigation_map, R.id.navigation_list
             )
         )
         if (navController != null) {
