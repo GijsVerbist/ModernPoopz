@@ -3,6 +3,8 @@ package com.example.modernpoopz
 import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -88,41 +90,52 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
             if(tempPay != null){
                 if(tempPay == "ja") {
                     payable.text = "Betalend"
+                    payable.visibility = VISIBLE
                 }
                 else{
                     payable.text = "Gratis"
+                    payable.visibility = VISIBLE
                 }
             }
             else{
-                payable.text = " "
+                //payable.text = " "
+                payable.visibility = GONE
             }
 
             if(tempTarget != null){
 
                 if(tempTarget.contains("man/vrouw")){
                     target.text = "Man/Vrouw"
+                    target.visibility = VISIBLE
                 }
                 else if (tempTarget.contains("vrouw")){
                     target.text = "Vrouw"
+                    target.visibility = VISIBLE
                 }
                 else{
                     target.text = "Man"
+                    target.visibility = VISIBLE
                 }
             }
             else{
-                target.text = " "
+                //target.text = " "
+                target.visibility = GONE
+
             }
 
             if(tempDisabled != null){
                 if(tempDisabled == "ja"){
                     disabled.text = "Rolstoelvriendelijk"
+                    disabled.visibility = VISIBLE
                 }
                 else{
                     disabled.text = " "
+                    disabled.visibility = GONE
                 }
             }
             else{
                 disabled.text = " "
+                disabled.visibility = GONE
             }
 
             view.setOnClickListener {

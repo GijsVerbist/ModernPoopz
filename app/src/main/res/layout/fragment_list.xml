@@ -109,7 +109,7 @@
             android:onClick="disabledFilterTapped"
             android:backgroundTint="@color/pink"
             android:textColor="@color/white"
-            android:text="IT"></Button>
+            android:text="Rolstoel"></Button>
 
         <Button
             android:id="@+id/babyFilter"
