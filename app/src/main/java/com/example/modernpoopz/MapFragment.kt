@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
@@ -109,6 +110,20 @@ class MapFragment : Fragment() {
 
     }
 
+    fun reload(){
+        var frg: Fragment? = null
+        frg = getFragmentManager()?.findFragmentByTag("mapTag")
+        val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
+        if (frg != null) {
+            ft.detach(frg)
+        }
+        if (frg != null) {
+            ft.attach(frg)
+        }
+        ft.commit()
+        println("REFRESH HAPPEND")
+    }
+
     @SuppressLint("Range")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View,savedInstanceState: Bundle?) {
@@ -141,13 +156,12 @@ class MapFragment : Fragment() {
         if (locationPermission()) {
 
             getLocation()
-            if(storagePermission()){
-                this.activity?.let { getToiletsFromApi(it) }
-            }
+
 
         }
         else {
             defaultLocation()
+            reload()
             ActivityCompat.requestPermissions(
                 requireActivity(), arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -157,17 +171,11 @@ class MapFragment : Fragment() {
             )
         }
         giveMap()
+       // reload()
 
     }
 
-    private fun storagePermission(): Boolean{
-        return context?.let {
-            ContextCompat.checkSelfPermission(
-                it,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE )
-        } == PackageManager.PERMISSION_GRANTED
 
-    }
 
     private fun defaultLocation(){
         setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
@@ -221,6 +229,9 @@ class MapFragment : Fragment() {
         val sfpo = SimpleFastPointOverlay(pt, opt);
 
         map?.overlays?.add(sfpo);
+
+        reload()
+
 
     }
 

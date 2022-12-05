@@ -5,6 +5,7 @@
     android:id="@+id/recycleView_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:tag="ListFragmentTag"
     tools:context=".ListFragment">
 
     <androidx.recyclerview.widget.RecyclerView

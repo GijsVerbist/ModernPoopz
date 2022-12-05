@@ -7,10 +7,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import android.widget.Button
 import android.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.modernpoopz.databinding.FragmentListBinding
@@ -30,6 +31,8 @@ class ListFragment : Fragment() {
     private var disabledButton: Button? = null
     private var babyButton: Button? = null
     private var searchView: SearchView? = null
+    var toiletList: ArrayList<Toilet>? = arrayListOf<Toilet>()
+
 
     private val binding get() = _binding!!
 
@@ -41,16 +44,47 @@ class ListFragment : Fragment() {
 
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //toiletAdapter = Toilet.getToiletsFromFile("toilets.json", this)
         databaseHelper = DatabaseHelper(requireContext(),null)
-
 
         return root
     }
 
-    fun getToilets(){
+    private fun storagePermission(): Boolean{
+        return context?.let {
+            ContextCompat.checkSelfPermission(
+                it,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE )
+        } == PackageManager.PERMISSION_GRANTED
 
-        val toiletList = databaseHelper?.getToilets()
+    }
+
+    fun reload(){
+        var frg: Fragment? = null
+        frg = getFragmentManager()?.findFragmentByTag("ListFragmentTag")
+        val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
+        if (frg != null) {
+            ft.detach(frg)
+        }
+        if (frg != null) {
+            ft.attach(frg)
+        }
+        ft.commit()
+        println("REFRESH HAPPEND")
+    }
+
+    fun getToilets(){
+        if(storagePermission()){
+            this.activity?.let {
+                Toilets.getToiletsFromApi(it)
+                toiletList = databaseHelper?.getToilets()
+               reload()
+            }
+        }else{
+            toiletList= Toilets.getToiletsWithoutPermission()
+            reload()
+
+            println("TOILETLIST!: "+toiletList?.count())
+        }
 
         println("get toilets " + toiletList?.count().toString())
 
@@ -139,7 +173,7 @@ class ListFragment : Fragment() {
             }
             override fun onQueryTextChange(newText: String): Boolean {
                 currentSearchText = newText
-                val toiletList = databaseHelper?.getToilets()
+                //val toiletList = databaseHelper?.getToilets()
                 val filterToiletsList = arrayListOf<Toilet>()
                 for (toilet in toiletList!!){
                     var street = toilet.properties.STRAAT?.lowercase()
@@ -211,7 +245,7 @@ class ListFragment : Fragment() {
         }
 
         val filterToiletsList = arrayListOf<Toilet>()
-        val toiletList = databaseHelper?.getToilets()
+        //val toiletList = databaseHelper?.getToilets()
 
         for (toilet in toiletList!!){
 

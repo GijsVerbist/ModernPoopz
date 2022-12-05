@@ -3,6 +3,7 @@ package com.example.modernpoopz
 import android.content.Context
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.common.Feature
 import com.google.gson.GsonBuilder
 import okhttp3.*
 import org.json.JSONException
@@ -18,7 +19,8 @@ class Toilets(
 ) {
 
     companion object {
-        fun getToiletsFromApi(activity: FragmentActivity){
+        var toilets2: ArrayList<Toilet> = ArrayList()
+        fun getToiletsFromApi(activity: FragmentActivity) {
 
             val client = OkHttpClient()
 
@@ -46,7 +48,7 @@ class Toilets(
 
 
                         for (toilet in toilets.features) {
-                            if(!database.NoDuplicationAllowed(toilet.properties.OBJECTID!!)) {
+                            if (!database.NoDuplicationAllowed(toilet.properties.OBJECTID!!)) {
                                 database.addToilet(
                                     toilet.properties.OBJECTID,
                                     toilet.properties.STRAAT,
@@ -65,7 +67,7 @@ class Toilets(
                                     toilet.properties.OPENINGSUREN_OPM
                                     //toilet.properties.type
                                 )
-                            }else(println("${toilet.properties.OBJECTID} is een duplicate!"))
+                            } else (println("${toilet.properties.OBJECTID} is een duplicate!"))
 
 
                         }
@@ -76,8 +78,76 @@ class Toilets(
             }
             )
         }
+
+        fun test(): ArrayList<Toilet>? {
+
+            val client = OkHttpClient()
+
+            val request = Request.Builder()
+                .url("https://geodata.antwerpen.be/arcgissql/rest/services/P_Portal/portal_publiek1/MapServer/8/query?outFields=*&where=1%3D1&f=geojson")
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.e("httperror: ", e.toString())
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+
+                    response.use {
+                        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+
+                        val json = response.body!!.string()
+                        println("JSON!: " + json)
+                        val gson = GsonBuilder().create()
+                        println("GSON!: " + gson)
+                        var toilets = gson.fromJson(json, Toilets::class.java)
+
+                        for (toilet in toilets.features) {
+                            var geo: Geometry? = Geometry(toilet.geometry.coordinates)
+                            var props: Properties? = Properties(
+                                toilet.properties.OBJECTID,
+                                toilet.properties.STRAAT,
+                                toilet.properties.HUISNUMMER,
+                                toilet.properties.POSTCODE,
+                                toilet.properties.BETALEND,
+                                toilet.properties.CATEGORIE,
+                                toilet.properties.OMSCHRIJVING,
+                                toilet.properties.DOELGROEP,
+                                toilet.properties.LUIERTAFEL,
+                                toilet.properties.INTEGRAAL_TOEGANKELIJK,
+                                toilet.properties.EXTRA_INFO_PUBLIEK,
+                                toilet.properties.CONTACTGEGEVENS,
+                                toilet.properties.OPENINGSUREN_OPM
+                            )
+                            var id = 0
+                            toilets2.add(Toilet(id, geo!!, props!!))
+                            id++
+                        }
+
+
+                        println("TOILETS2: " + toilets2.count())
+                    }
+
+                }
+
+            }
+            )
+            return toilets2
+        }
+
+        fun getToiletsWithoutPermission(): ArrayList<Toilet>{
+            test()
+            println("TOILETS2: " + toilets2.count())
+            return toilets2
+        }
     }
 }
+
+
+
+
 class Toilet (val id: Int,val geometry: Geometry, val properties: Properties)
 class Geometry(val coordinates: DoubleArray?)
 class Properties(
