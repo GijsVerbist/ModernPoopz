@@ -19,6 +19,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.modernpoopz.Toilets.Companion.getToiletsFromApi
 
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
