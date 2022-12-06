@@ -136,7 +136,7 @@ class DetailView : AppCompatActivity() {
             contactgegevensText.text = contactgegevens
         }
         else{
-            contactgegevensText.text = "Geen contact gegevens gevonden voor deze locatie"
+            contactgegevensText.text = "Geen contactgegevens gevonden voor deze locatie"
         }
 
 

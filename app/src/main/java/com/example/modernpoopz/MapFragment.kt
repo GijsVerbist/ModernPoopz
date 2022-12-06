@@ -14,6 +14,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -52,9 +53,7 @@ import org.osmdroid.config.Configuration.*
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.ItemizedIconOverlay
-import org.osmdroid.views.overlay.ItemizedOverlay
-import org.osmdroid.views.overlay.OverlayItem
+import org.osmdroid.views.overlay.*
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions
@@ -70,20 +69,16 @@ import java.util.ArrayList
 class MapFragment : Fragment() {
     private lateinit var map: MapView
 
-    private var mMyLocationOverlay: ItemizedOverlay<OverlayItem>? = null
-    private var items = ArrayList<OverlayItem>()
     private var searchField: EditText? = null
     private var searchButton: Button? = null
     private val urlNominatim = "https://nominatim.openstreetmap.org/"
-    private var notificationManager: NotificationManager? = null
-    private var mChannel: NotificationChannel? = null
+
 
     var PERMISSION_ID = 1
     private var  _binding: FragmentMapBinding? = null
     private lateinit var locationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    val LOCATION_PERMISSION_REQUEST_CODE = 1
     private val REQUEST_CHECK_SETTINGS: Int = 61124
 
     companion object{
@@ -105,8 +100,6 @@ class MapFragment : Fragment() {
         }
 
         return inflater.inflate(R.layout.fragment_map, container, false)
-
-
 
     }
 
@@ -161,7 +154,6 @@ class MapFragment : Fragment() {
         }
         else {
             defaultLocation()
-            reload()
             ActivityCompat.requestPermissions(
                 requireActivity(), arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -171,7 +163,6 @@ class MapFragment : Fragment() {
             )
         }
         giveMap()
-       // reload()
 
     }
 
@@ -190,49 +181,75 @@ class MapFragment : Fragment() {
 
         map?.controller?.setZoom(17.0)
 
-      //  setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
-
-
-        val points = ArrayList<IGeoPoint>();
         val db = DatabaseHelper(requireContext(), null)
         val toilets = db.getToilets()
 
+
+        var markerList = ArrayList<OverlayItem>()
         var hash : HashMap<Int, Toilet> = HashMap()
-        for ((counter, toilet) in toilets.withIndex()) {
+        for ((count, toilet) in toilets.withIndex()) {
 
-            hash[counter] = toilet
 
-            points.add(
-                LabelledGeoPoint(
-                    toilet.geometry.coordinates?.get(0)!!,
-                    toilet.geometry.coordinates[1],
-                     ": " +toilet.properties.STRAAT + " " + toilet.properties.HUISNUMMER
+            var markerItem =OverlayItem(
+
+                toilet.properties.STRAAT,
+                "", GeoPoint(toilet.geometry.coordinates?.get(0)!!,
+                    toilet.geometry.coordinates?.get(1)!!
                 )
+
+
             )
+
+            var newMarker: Drawable = this.resources.getDrawable(R.drawable.ic_marker_foreground)
+            markerItem.setMarker(newMarker)
+            markerList.add(markerItem)
+            hash[count] = toilet
+
         }
+        val markerOverlay = ItemizedOverlayWithFocus(
+            markerList,
+            object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem?> {
+                override fun onItemSingleTapUp(c: Int, item: OverlayItem?): Boolean {
+
+                    val t = toilets[c]
+                    if(t.properties.STRAAT != null){
+                        Toast.makeText(context, t.properties.STRAAT, Toast.LENGTH_SHORT).show()
+                    }else{
+                        return false
+
+                    }
 
 
-        val pt = SimplePointTheme(points, true);
+                    return true
+                }
+                override fun onItemLongPress(index: Int, item: OverlayItem?): Boolean {
+                    val toilet = toilets[index]
+                    val intent = Intent(context, DetailView::class.java)
+                    intent.putExtra("straat", toilet.properties.STRAAT)
+                    intent.putExtra("huisnummer", toilet.properties.HUISNUMMER)
+                    intent.putExtra("postcode", toilet.properties.POSTCODE)
+                    intent.putExtra("betalend", toilet.properties.BETALEND)
+                    intent.putExtra("disabled", toilet.properties.INTEGRAAL_TOEGANKELIJK)
+                    intent.putExtra("target", toilet.properties.DOELGROEP)
+                    intent.putExtra("description", toilet.properties.OMSCHRIJVING)
+                    intent.putExtra("category", toilet.properties.CATEGORIE)
+                    intent.putExtra("extra_informatie", toilet.properties.EXTRA_INFO_PUBLIEK)
+                    intent.putExtra("openingsuren", toilet.properties.OPENINGSUREN_OPM)
+                    intent.putExtra("contactgegevens", toilet.properties.CONTACTGEGEVENS)
 
+                    if(toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates[1]!! != null){
+                        intent.putExtra("lat", toilet.geometry.coordinates[0])
+                        intent.putExtra("long", toilet.geometry.coordinates[1])
+                    }
+                    context?.startActivity(intent)
 
-        val textStyle = Paint();
-        textStyle.style = Paint.Style.STROKE
-        textStyle.color = Color.parseColor("#0000ff")
-        textStyle.textAlign = Paint.Align.CENTER
-        textStyle.textSize = 23F
+                    return true
+                }
+            }
+            ,context
 
-
-        val opt = SimpleFastPointOverlayOptions.getDefaultStyle()
-            .setAlgorithm(SimpleFastPointOverlayOptions.RenderingAlgorithm.MAXIMUM_OPTIMIZATION)
-            .setRadius(25F).setIsClickable(true).setCellSize(10).setTextStyle(textStyle);
-
-        val sfpo = SimpleFastPointOverlay(pt, opt);
-
-        map?.overlays?.add(sfpo);
-
-        reload()
-
-
+        )
+        map.overlays.add(markerOverlay)
     }
 
     override fun onDestroyView() {
@@ -259,9 +276,12 @@ class MapFragment : Fragment() {
 
 
     private fun addMarker(geoPoint: GeoPoint, name: String) {
-        items.add(OverlayItem(name, name, geoPoint))
-        mMyLocationOverlay = ItemizedIconOverlay(items, null, view?.context)
-        map?.overlays?.add(mMyLocationOverlay)
+        val marker = Marker(map)
+        marker.position = geoPoint
+        marker.title = name
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        map?.overlays?.add(marker)
+
     }
 
     open fun setCenter(geoPoint: GeoPoint, name: String) {
@@ -396,5 +416,9 @@ class MapFragment : Fragment() {
 
 
     }
+
+private operator fun GeoPoint.invoke(map: MapView) {
+
+}
 
 

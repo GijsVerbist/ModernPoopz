@@ -77,11 +77,9 @@ class ListFragment : Fragment() {
             this.activity?.let {
                 Toilets.getToiletsFromApi(it)
                 toiletList = databaseHelper?.getToilets()
-               reload()
             }
         }else{
             toiletList= Toilets.getToiletsWithoutPermission()
-            reload()
 
             println("TOILETLIST!: "+toiletList?.count())
         }

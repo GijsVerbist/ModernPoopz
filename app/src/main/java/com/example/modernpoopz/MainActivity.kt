@@ -35,18 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //needed for sqllite etc
-       /* if(storagePermission()){
-            //getToiletsFromApi(this)
 
-        }else{
-            ActivityCompat.requestPermissions(
-                this, arrayOf(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ), 100)
-        }
-        getToiletsFromApi(this)
-*/
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
@@ -65,11 +54,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    private fun storagePermission(): Boolean{
-        return ContextCompat.checkSelfPermission(
-            applicationContext,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE )== PackageManager.PERMISSION_GRANTED
 
-    }
 }
 

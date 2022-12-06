@@ -226,8 +226,5 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         val OPENINGSUREN_OPM_COL = "OPENINGSUREN_OPM"
 
-
-
-        val TYPE_COL = "type"
     }
 }

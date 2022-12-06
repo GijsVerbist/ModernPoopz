@@ -20,6 +20,7 @@ class Toilets(
 
     companion object {
         var toilets2: ArrayList<Toilet> = ArrayList()
+        var toilets3: ArrayList<Toilet> = ArrayList()
         fun getToiletsFromApi(activity: FragmentActivity) {
 
             val client = OkHttpClient()
@@ -79,7 +80,7 @@ class Toilets(
             )
         }
 
-        fun test(): ArrayList<Toilet>? {
+        fun test() {
 
             val client = OkHttpClient()
 
@@ -123,24 +124,26 @@ class Toilets(
                             )
                             var id = 0
                             toilets2.add(Toilet(id, geo!!, props!!))
-                            id++
+                            toilets3 = toilets2.distinctBy { it.properties.OBJECTID } as ArrayList<Toilet>
+
+
                         }
 
 
                         println("TOILETS2: " + toilets2.count())
+                        println("TOILETS3: " + toilets3.count())
                     }
 
                 }
 
             }
             )
-            return toilets2
         }
 
         fun getToiletsWithoutPermission(): ArrayList<Toilet>{
             test()
-            println("TOILETS2: " + toilets2.count())
-            return toilets2
+            println("TOILETS21: " + toilets2.count())
+            return toilets3
         }
     }
 }
