@@ -129,12 +129,12 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
                     disabled.visibility = VISIBLE
                 }
                 else{
-                    disabled.text = " "
+                    //disabled.text = " "
                     disabled.visibility = GONE
                 }
             }
             else{
-                disabled.text = " "
+                //disabled.text = " "
                 disabled.visibility = GONE
             }
 

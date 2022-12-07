@@ -2,6 +2,7 @@ package com.example.modernpoopz
 
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -63,41 +64,51 @@ class DetailView : AppCompatActivity() {
         if(betalend != null){
             if(betalend == "ja") {
                 payableText.text = "Betalend"
+                payableText.visibility = View.VISIBLE
             }
             else{
                 payableText.text = "Gratis"
+                payableText.visibility = View.VISIBLE
             }
         }
         else{
-            payableText.text = " "
+            //payableText.text = " "
+            payableText.visibility = View.GONE
         }
 
         if(target != null){
 
             if(target.contains("man/vrouw")){
                 targetText.text = "Man/Vrouw"
+                targetText.visibility = View.VISIBLE
             }
             else if (target.contains("vrouw")){
                 targetText.text = "Vrouw"
+                targetText.visibility = View.VISIBLE
             }
             else{
                 targetText.text = "Man"
+                targetText.visibility = View.VISIBLE
             }
         }
         else{
-            targetText.text = " "
+            //targetText.text = " "
+            targetText.visibility = View.GONE
         }
 
         if(disabled != null){
             if(disabled == "ja"){
                 disabledText.text = "Rolstoelvriendelijk"
+                disabledText.visibility = View.VISIBLE
             }
             else{
-                disabledText.text = " "
+                //disabledText.text = " "
+                disabledText.visibility = View.GONE
             }
         }
         else{
-            disabledText.text = " "
+            //disabledText.text = " "
+            disabledText.visibility = View.GONE
         }
 
         if (category != null){
