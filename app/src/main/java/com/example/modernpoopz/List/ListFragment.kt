@@ -1,4 +1,4 @@
-package com.example.modernpoopz
+package com.example.modernpoopz.List
 
 import android.Manifest
 import android.content.Intent
@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.modernpoopz.*
 import com.example.modernpoopz.databinding.FragmentListBinding
 
 class ListFragment : Fragment() {
@@ -72,7 +73,7 @@ class ListFragment : Fragment() {
         println("REFRESH HAPPEND")
     }
 
-    fun getToilets(){
+    private fun getToilets(){
         if(storagePermission()){
             this.activity?.let {
                 Toilets.getToiletsFromApi(it)
@@ -121,32 +122,32 @@ class ListFragment : Fragment() {
 
         getToilets()
 
-        allButton = view?.findViewById(R.id.allFilter)
+        allButton = view.findViewById(R.id.allFilter)
         allButton?.setOnClickListener {
             allFilterTapped(view)
         }
 
-        freeButton = view?.findViewById(R.id.freeFilter)
+        freeButton = view.findViewById(R.id.freeFilter)
         freeButton?.setOnClickListener {
             freeFilterTapped(view)
         }
 
-        maleButton = view?.findViewById(R.id.maleFilter)
+        maleButton = view.findViewById(R.id.maleFilter)
         maleButton?.setOnClickListener {
             maleFilterTapped(view)
         }
 
-        femaleButton = view?.findViewById(R.id.femaleFilter)
+        femaleButton = view.findViewById(R.id.femaleFilter)
         femaleButton?.setOnClickListener {
             femaleFilterTapped(view)
         }
 
-        disabledButton = view?.findViewById(R.id.disabledFilter)
+        disabledButton = view.findViewById(R.id.disabledFilter)
         disabledButton?.setOnClickListener {
             disabledFilterTapped(view)
         }
 
-        babyButton = view?.findViewById(R.id.babyFilter)
+        babyButton = view.findViewById(R.id.babyFilter)
         babyButton?.setOnClickListener {
             babyFilterTapped(view)
         }
@@ -162,7 +163,7 @@ class ListFragment : Fragment() {
         _binding = null
     }
 
-    fun initSearchWidgets(){
+    private fun initSearchWidgets(){
         searchView = view?.findViewById(R.id.searchViewField)
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -171,11 +172,10 @@ class ListFragment : Fragment() {
             }
             override fun onQueryTextChange(newText: String): Boolean {
                 currentSearchText = newText
-                //val toiletList = databaseHelper?.getToilets()
                 val filterToiletsList = arrayListOf<Toilet>()
                 for (toilet in toiletList!!){
-                    var street = toilet.properties.STRAAT?.lowercase()
-                    var postcode = toilet.properties.POSTCODE
+                    val street = toilet.properties.STRAAT?.lowercase()
+                    val postcode = toilet.properties.POSTCODE
 
                     if(street?.contains(newText.lowercase()) == true || postcode.toString().contains(newText.lowercase())){
 
@@ -220,15 +220,15 @@ class ListFragment : Fragment() {
         })
     }
 
-    fun lookSelected(parsedButton:Button?){
+    private fun lookSelected(parsedButton:Button?){
         parsedButton?.alpha = 1.0F
     }
 
-    fun lookUnSelected(parsedButton: Button?){
+    private fun lookUnSelected(parsedButton: Button?){
         parsedButton?.alpha = 0.5F
     }
 
-    fun unSelectAllFilterButtons(){
+    private fun unSelectAllFilterButtons(){
         lookUnSelected(freeButton)
         lookUnSelected(maleButton)
         lookUnSelected(femaleButton)
@@ -236,7 +236,7 @@ class ListFragment : Fragment() {
         lookUnSelected(babyButton)
     }
 
-    fun filterList(status: String){
+    private fun filterList(status: String){
 
         if(!selectedFilters.contains(status)){
             selectedFilters.add(status)
@@ -247,8 +247,8 @@ class ListFragment : Fragment() {
 
         for (toilet in toiletList!!){
 
-            var street = toilet.properties.STRAAT?.lowercase()
-            var postcode = toilet.properties.POSTCODE
+            val street = toilet.properties.STRAAT?.lowercase()
+            val postcode = toilet.properties.POSTCODE
 
             for(filter in selectedFilters){
                 var tempProp: String? = null
@@ -287,7 +287,7 @@ class ListFragment : Fragment() {
 
     }
 
-    fun allFilterTapped(view: View) {
+    private fun allFilterTapped(view: View) {
         selectedFilters.clear()
         selectedFilters.add("all")
         searchView?.setQuery("",false)
@@ -297,31 +297,31 @@ class ListFragment : Fragment() {
         lookSelected(allButton)
         getToilets()
     }
-    fun freeFilterTapped(view: View) {
+    private fun freeFilterTapped(view: View) {
         lookSelected(freeButton)
         lookUnSelected(allButton)
         selectedFilters.remove("all")
         filterList("nee_freefilter")
     }
-    fun maleFilterTapped(view: View) {
+    private fun maleFilterTapped(view: View) {
         lookSelected(maleButton)
         lookUnSelected(allButton)
         selectedFilters.remove("all")
         filterList("man")
     }
-    fun femaleFilterTapped(view: View) {
+    private fun femaleFilterTapped(view: View) {
         lookSelected(femaleButton)
         lookUnSelected(allButton)
         selectedFilters.remove("all")
         filterList("vrouw")
     }
-    fun disabledFilterTapped(view: View) {
+    private fun disabledFilterTapped(view: View) {
         lookSelected(disabledButton)
         lookUnSelected(allButton)
         selectedFilters.remove("all")
         filterList("ja_disabledfilter")
     }
-    fun babyFilterTapped(view: View) {
+    private fun babyFilterTapped(view: View) {
         lookSelected(babyButton)
         lookUnSelected(allButton)
         selectedFilters.remove("all")

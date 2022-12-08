@@ -1,4 +1,4 @@
-package com.example.modernpoopz
+package com.example.modernpoopz.Map
 
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -6,39 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.drawable.Drawable
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.preference.PreferenceManager
-import android.service.quicksettings.Tile
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.commit
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.example.modernpoopz.Toilets.Companion.getToiletsFromApi
+import com.example.modernpoopz.DatabaseHelper
+import com.example.modernpoopz.List.DetailView
+import com.example.modernpoopz.Toilet
 import com.example.modernpoopz.databinding.FragmentMapBinding
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -46,7 +36,6 @@ import com.google.android.gms.tasks.Task
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 
 import org.osmdroid.config.Configuration.*
@@ -54,10 +43,6 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.*
-import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint
-import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
-import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions
-import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import java.io.File
 import java.net.URL
 import java.net.URLEncoder
@@ -99,7 +84,7 @@ class MapFragment : Fragment() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
-        return inflater.inflate(R.layout.fragment_map, container, false)
+        return inflater.inflate(com.example.modernpoopz.R.layout.fragment_map, container, false)
 
     }
 
@@ -131,9 +116,9 @@ class MapFragment : Fragment() {
         val tileCache = File(osmConfig.osmdroidBasePath, "tile")
         osmConfig.osmdroidTileCache = tileCache
 
-        map = view?.findViewById(R.id.mapview)!!
-        searchField = view?.findViewById(R.id.search_txtview)
-        searchButton = view?.findViewById(R.id.search_button)
+        map = view.findViewById(com.example.modernpoopz.R.id.mapview)!!
+        searchField = view.findViewById(com.example.modernpoopz.R.id.search_txtview)
+        searchButton = view.findViewById(com.example.modernpoopz.R.id.search_button)
         searchButton?.setOnClickListener {
             val url = URL(
                 urlNominatim + "search?q=" + URLEncoder.encode(
@@ -179,18 +164,18 @@ class MapFragment : Fragment() {
 
         map.setMultiTouchControls(true);
 
-        map?.controller?.setZoom(17.0)
+        map.controller?.setZoom(17.0)
 
         val db = DatabaseHelper(requireContext(), null)
         val toilets = db.getToilets()
 
 
-        var markerList = ArrayList<OverlayItem>()
-        var hash : HashMap<Int, Toilet> = HashMap()
+        val markerList = ArrayList<OverlayItem>()
+        val hash : HashMap<Int, Toilet> = HashMap()
         for ((count, toilet) in toilets.withIndex()) {
 
 
-            var markerItem =OverlayItem(
+            val markerItem =OverlayItem(
 
                 toilet.properties.STRAAT,
                 "", GeoPoint(toilet.geometry.coordinates?.get(0)!!,
@@ -200,7 +185,7 @@ class MapFragment : Fragment() {
 
             )
 
-            var newMarker: Drawable = this.resources.getDrawable(R.drawable.ic_marker_foreground)
+            val newMarker: Drawable = this.resources.getDrawable(com.example.modernpoopz.R.drawable.ic_marker_foreground)
             markerItem.setMarker(newMarker)
             markerList.add(markerItem)
             hash[count] = toilet
@@ -280,12 +265,12 @@ class MapFragment : Fragment() {
         marker.position = geoPoint
         marker.title = name
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        map?.overlays?.add(marker)
+        map.overlays?.add(marker)
 
     }
 
-    open fun setCenter(geoPoint: GeoPoint, name: String) {
-        map?.controller?.setCenter(geoPoint)
+     fun setCenter(geoPoint: GeoPoint, name: String) {
+        map.controller?.setCenter(geoPoint)
         addMarker(geoPoint, name)
     }
 
@@ -306,7 +291,7 @@ class MapFragment : Fragment() {
             val result = response.body!!.string()
 
             activity?.runOnUiThread {
-                val jsonString = StringBuilder(result!!)
+                val jsonString = StringBuilder(result)
 
                 val parser: Parser = Parser.default()
 

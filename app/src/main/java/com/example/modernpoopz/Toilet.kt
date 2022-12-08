@@ -80,7 +80,7 @@ class Toilets(
             )
         }
 
-        fun test() {
+        fun getDataWithoutPermission() {
 
             val client = OkHttpClient()
 
@@ -141,7 +141,7 @@ class Toilets(
         }
 
         fun getToiletsWithoutPermission(): ArrayList<Toilet>{
-            test()
+            getDataWithoutPermission()
             println("TOILETS21: " + toilets2.count())
             return toilets3
         }

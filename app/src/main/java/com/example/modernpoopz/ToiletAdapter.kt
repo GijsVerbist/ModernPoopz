@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.modernpoopz.Map.MapFragment
 import java.math.RoundingMode
 import java.text.DecimalFormat
 

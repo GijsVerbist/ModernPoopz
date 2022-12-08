@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:tag="ListFragmentTag"
-    tools:context=".ListFragment">
+    tools:context=".List.ListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recipe_list_view"

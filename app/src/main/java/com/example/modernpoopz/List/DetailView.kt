@@ -1,4 +1,4 @@
-package com.example.modernpoopz
+package com.example.modernpoopz.List
 
 import android.location.Location
 import android.os.Bundle
@@ -6,12 +6,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
-import androidx.navigation.NavDeepLinkBuilder
-import org.osmdroid.util.GeoPoint
-import org.w3c.dom.Text
+import com.example.modernpoopz.Map.MapFragment
+import com.example.modernpoopz.R
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.util.*
@@ -72,7 +68,6 @@ class DetailView : AppCompatActivity() {
             }
         }
         else{
-            //payableText.text = " "
             payableText.visibility = View.GONE
         }
 
@@ -102,12 +97,10 @@ class DetailView : AppCompatActivity() {
                 disabledText.visibility = View.VISIBLE
             }
             else{
-                //disabledText.text = " "
                 disabledText.visibility = View.GONE
             }
         }
         else{
-            //disabledText.text = " "
             disabledText.visibility = View.GONE
         }
 

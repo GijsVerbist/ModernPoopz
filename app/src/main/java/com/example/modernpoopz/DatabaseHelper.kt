@@ -190,7 +190,7 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         private val DATABASE_NAME = "ModernPoopz"
 
 
-        private var DATABASE_VERSION = 29
+        private var DATABASE_VERSION = 30
 
         val TABLE_NAME = "Toilets"
 

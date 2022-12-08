@@ -20,7 +20,7 @@
         android:theme="@style/Theme.ModernPoopz"
         tools:targetApi="31">
         <activity
-            android:name=".DetailView"
+            android:name=".List.DetailView"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

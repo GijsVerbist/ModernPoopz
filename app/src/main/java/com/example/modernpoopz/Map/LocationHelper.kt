@@ -1,4 +1,4 @@
-package com.example.modernpoopz
+package com.example.modernpoopz.Map
 
 class LocationHelper {
     companion object{
