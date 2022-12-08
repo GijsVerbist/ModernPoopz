@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:tag="ListFragmentTag"
-    tools:context=".List.ListFragment">
+    tools:context=".List.ListFragment"
+    android:background="#59D5CDCD">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recipe_list_view"
@@ -30,7 +31,8 @@
         android:iconifiedByDefault="false"
         android:queryHint="Adres zoeken"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></SearchView>
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#59D5CDCD"></SearchView>
 
     <LinearLayout
         android:id="@+id/filter_row_1"
@@ -86,7 +88,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        android:backgroundTint="@color/teal_200"
         app:layout_constraintTop_toBottomOf="@+id/filter_row_1">
 
 
