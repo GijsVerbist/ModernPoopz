@@ -15,11 +15,11 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.modernpoopz.*
+import com.example.modernpoopz.Map.MapFragment
 import com.example.modernpoopz.databinding.FragmentListBinding
 
 class ListFragment : Fragment() {
 
-    private var toilet: Toilet? = null
     private var toiletAdapter: ToiletAdapter? = null
     private var _binding: FragmentListBinding? = null
     private var databaseHelper: DatabaseHelper? = null
@@ -59,19 +59,6 @@ class ListFragment : Fragment() {
 
     }
 
-    fun reload(){
-        var frg: Fragment? = null
-        frg = getFragmentManager()?.findFragmentByTag("ListFragmentTag")
-        val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
-        if (frg != null) {
-            ft.detach(frg)
-        }
-        if (frg != null) {
-            ft.attach(frg)
-        }
-        ft.commit()
-        println("REFRESH HAPPEND")
-    }
 
     private fun getToilets(){
         if(storagePermission()){
@@ -81,12 +68,10 @@ class ListFragment : Fragment() {
             }
         }else{
             toiletList= Toilets.getToiletsWithoutPermission()
+           // MapFragment.userLat =  4.41655480828479
+            //MapFragment.userLong =  51.23020595
 
-            println("TOILETLIST!: "+toiletList?.count())
         }
-
-        println("get toilets " + toiletList?.count().toString())
-
         toiletAdapter?.setToilets(toiletList!!)
 
     }
@@ -97,6 +82,8 @@ class ListFragment : Fragment() {
         recyclerview?.layoutManager = LinearLayoutManager(view.context)
 
         toiletAdapter = ToiletAdapter()
+        getToilets()
+
         recyclerview?.adapter = toiletAdapter
 
         toiletAdapter?.onItemClick = {toilet ->
@@ -119,8 +106,6 @@ class ListFragment : Fragment() {
             }
             context?.startActivity(intent)
         }
-
-        getToilets()
 
         allButton = view.findViewById(R.id.allFilter)
         allButton?.setOnClickListener {

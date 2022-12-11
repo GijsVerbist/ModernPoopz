@@ -20,6 +20,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.modernpoopz.Map.MapFragment
 import com.example.modernpoopz.Toilets.Companion.getToiletsFromApi
 
 
@@ -36,9 +37,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        //Handling bottom navigation
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -49,10 +50,6 @@ class MainActivity : AppCompatActivity() {
             setupActionBarWithNavController(navController, appBarConfiguration)
             navView.setupWithNavController(navController)
         }
-
-
-
-
     }
 
 }

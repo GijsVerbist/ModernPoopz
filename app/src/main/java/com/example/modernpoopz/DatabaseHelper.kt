@@ -117,7 +117,6 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         }
         var objectId: Int?
         var street: String?
-        var type: String?
         var paying: String?
         var housenumber: String?
         var postcode: Int?

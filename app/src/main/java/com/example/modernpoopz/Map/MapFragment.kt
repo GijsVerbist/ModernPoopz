@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
@@ -54,6 +55,8 @@ import java.util.ArrayList
 class MapFragment : Fragment() {
     private lateinit var map: MapView
 
+
+
     private var searchField: EditText? = null
     private var searchButton: Button? = null
     private val urlNominatim = "https://nominatim.openstreetmap.org/"
@@ -69,39 +72,31 @@ class MapFragment : Fragment() {
     companion object{
         var userLat: Double = 51.23020595
         var userLong: Double = 4.41655480828479
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
 
+
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        super.onCreate(savedInstanceState)
+
+
         locationRequest = LocationRequest.create().apply {
             interval = 10000
             fastestInterval = 5000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
+
+
         return inflater.inflate(com.example.modernpoopz.R.layout.fragment_map, container, false)
 
     }
-
-    fun reload(){
-        var frg: Fragment? = null
-        frg = getFragmentManager()?.findFragmentByTag("mapTag")
-        val ft: FragmentTransaction = requireFragmentManager().beginTransaction()
-        if (frg != null) {
-            ft.detach(frg)
-        }
-        if (frg != null) {
-            ft.attach(frg)
-        }
-        ft.commit()
-        println("REFRESH HAPPEND")
-    }
-
     @SuppressLint("Range")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View,savedInstanceState: Bundle?) {
@@ -130,12 +125,8 @@ class MapFragment : Fragment() {
 
             getAddressOrLocation(url)
         }
-
         if (locationPermission()) {
-
             getLocation()
-
-
         }
         else {
             defaultLocation()
@@ -155,6 +146,8 @@ class MapFragment : Fragment() {
 
     private fun defaultLocation(){
         setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
+        println("userlat!: " + userLat)
+        println("userlong!: " + userLong)
 
     }
 
@@ -357,10 +350,14 @@ class MapFragment : Fragment() {
                             userLong = location.longitude
                             LocationHelper.long = location.longitude
                             setCenter(
-                                GeoPoint(location.latitude, location.longitude), "user location"
+                                GeoPoint(location.latitude, location.longitude), "U bevindt zich hier"
                             )
                             stopUpdates()
                         }
+                        println("userlat!: " + userLat)
+                        println("userlong!: " + userLong)
+
+
 
                     }
                 }

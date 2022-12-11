@@ -165,45 +165,10 @@ class DetailView : AppCompatActivity() {
             distanceText.text = " "
         }
 
-        println("Coord")
-        println(MapFragment.userLat)
-        println(MapFragment.userLong)
-        println(lat)
-        println(long)
-
-
         var back_buton: Button = findViewById(R.id.detail_back_button)
         back_buton.setOnClickListener{
             finish()
         }
-
-       //val fragment = MapFragment()
-       //buttonTest.setOnClickListener {supportFragmentManager.beginTransaction().replace(R.id.actualmapview, fragment).commit() }
-
-        /*buttonTest.setOnClickListener {
-            supportFragmentManager.commit {
-                replace<MapFragment>(R.id.actualmapview, "mapTag")
-
-            }
-        }
-
-
-        /*val fragment: MapFragment? = MapFragment()
-
-        val pendingIntent = NavDeepLinkBuilder(this.applicationContext)
-            .setGraph(R.navigation.navigation)
-            .setDestination(R.id.navigation_map)
-            .createPendingIntent()
-
-        buttonTest.setOnClickListener { pendingIntent.send() }
-        */
-        */
-
-
-
-
-
-
     }
 }
 

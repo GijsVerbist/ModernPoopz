@@ -66,7 +66,6 @@ class Toilets(
                                     toilet.properties.EXTRA_INFO_PUBLIEK,
                                     toilet.properties.CONTACTGEGEVENS,
                                     toilet.properties.OPENINGSUREN_OPM
-                                    //toilet.properties.type
                                 )
                             } else (println("${toilet.properties.OBJECTID} is een duplicate!"))
 
@@ -100,13 +99,16 @@ class Toilets(
 
 
                         val json = response.body!!.string()
-                        println("JSON!: " + json)
                         val gson = GsonBuilder().create()
-                        println("GSON!: " + gson)
                         var toilets = gson.fromJson(json, Toilets::class.java)
 
                         for (toilet in toilets.features) {
-                            var geo: Geometry? = Geometry(toilet.geometry.coordinates)
+                            var test: DoubleArray = doubleArrayOf(
+                                toilet.geometry.coordinates?.get(1)!!,
+                                toilet.geometry.coordinates?.get(0)!!
+                            )
+                            var geo: Geometry? = Geometry(test)
+
                             var props: Properties? = Properties(
                                 toilet.properties.OBJECTID,
                                 toilet.properties.STRAAT,
@@ -128,10 +130,6 @@ class Toilets(
 
 
                         }
-
-
-                        println("TOILETS2: " + toilets2.count())
-                        println("TOILETS3: " + toilets3.count())
                     }
 
                 }
@@ -167,7 +165,6 @@ class Properties(
     var EXTRA_INFO_PUBLIEK: String?,
     var CONTACTGEGEVENS: String?,
     var OPENINGSUREN_OPM: String?
- //   var type: String?
 )
 
 

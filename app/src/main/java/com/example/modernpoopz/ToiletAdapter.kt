@@ -18,11 +18,11 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     var onItemClick: ((Toilet) -> Unit)? = null
 
     fun setToilets( toiletList: ArrayList<Toilet>) {
-        var sortedListOfToilets = toiletList
+        val sortedListOfToilets = toiletList
             .sortedWith(object : Comparator <Toilet> {
                 override fun compare (t1: Toilet, t2: Toilet) : Int {
-                    var distanceInKm1 = GetDistanceBetWeenPoints(t1)
-                    var distanceInKm2 = GetDistanceBetWeenPoints(t2)
+                    val distanceInKm1 = getDistanceBetWeenPoints(t1)
+                    val distanceInKm2 = getDistanceBetWeenPoints(t2)
 
                     if (distanceInKm1 > distanceInKm2){
                         return 1
@@ -63,14 +63,14 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
         private var distance = view.findViewById<TextView>(R.id.toilet_list_filter_distance)
 
         fun bindView(toilet: Toilet) {
-            var tempStreetname = toilet.properties.STRAAT
-            var tempNumber = toilet.properties.HUISNUMMER
-            var tempPostcode = toilet.properties.POSTCODE
-            var tempPay = toilet.properties.BETALEND
-            var tempTarget = toilet.properties.DOELGROEP
-            var tempDisabled = toilet.properties.INTEGRAAL_TOEGANKELIJK
+            val tempStreetname = toilet.properties.STRAAT
+            val tempNumber = toilet.properties.HUISNUMMER
+            val tempPostcode = toilet.properties.POSTCODE
+            val tempPay = toilet.properties.BETALEND
+            val tempTarget = toilet.properties.DOELGROEP
+            val tempDisabled = toilet.properties.INTEGRAAL_TOEGANKELIJK
 
-            var distanceInKm = GetDistanceBetWeenPoints(toilet)
+            val distanceInKm = getDistanceBetWeenPoints(toilet)
 
             val df = DecimalFormat("#.#")
             df.roundingMode = RoundingMode.DOWN
@@ -143,49 +143,14 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
                 onItemClick?.invoke(toilets!![adapterPosition])
             }
         }
-
-
-
-
-   /* override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-
-        val rowView = inflater.inflate(R.layout.list_item_toilet, parent, false)
-
-
-        val titleTextView = rowView.findViewById(R.id.toilet_list_title) as TextView
-
-
-        val subtitleTextView = rowView.findViewById(R.id.toilet_list_subtitle) as TextView
-
-
-        val detailTextView = rowView.findViewById(R.id.toilet_list_detail) as TextView
-
-        val thumbnailImageView = rowView.findViewById(R.id.toilet_list_thumbnail) as ImageView
-
-        val toilet = getItem(position) as Toilet
-
-        titleTextView.text = toilet.straat
-        subtitleTextView.text = toilet.huisnummer
-        detailTextView.text = toilet.postcode.toString()
-
-
-        //Picasso.with(context).load(toilet.imageUrl).placeholder(R.mipmap.ic_launcher).into(thumbnailImageView)
-
-
-
-        return rowView
-    }*/
-
-
     }
 
-    fun GetDistanceBetWeenPoints(toilet:Toilet): Float {
+    fun getDistanceBetWeenPoints(toilet:Toilet): Float {
 
         val distanceResult = FloatArray(1)
         if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null && MapFragment.userLat != null && MapFragment.userLong != null) {
             val toiletLat = toilet.geometry.coordinates[0]
             val toiletLong = toilet.geometry.coordinates[1]
-
             Location.distanceBetween(
                 MapFragment.userLat,
                 MapFragment.userLong,

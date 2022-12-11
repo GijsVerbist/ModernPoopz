@@ -11,11 +11,4 @@
         android:title="Lijst"
         android:icon="@drawable/ic_baseline_list_24">
     </item>
-
-
-
-
-
-
-
 </menu>
