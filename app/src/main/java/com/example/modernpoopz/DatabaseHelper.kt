@@ -38,20 +38,12 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 )
 
         db.execSQL(first_query)
-
-//
-        //
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
         onCreate(db)
     }
-
-    fun dropTable(db: SQLiteDatabase) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-    }
-
 
     fun addToilet(
         objectId: Int?,
@@ -69,9 +61,9 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         extra_informatie: String?,
         contactgegevens: String?,
         openingsuren: String?
-       // type: String?
     ){
 
+        //Putting everything in DB
         val values = ContentValues()
 
         values.put(OBJECTID_COL, objectId)
@@ -89,7 +81,6 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         values.put(EXTRA_INFORMATIE_COL, extra_informatie)
         values.put(CONTACTGEGEVENS_COL, contactgegevens)
         values.put(OPENINGSUREN_OPM_COL, openingsuren)
-        //values.put(TYPE_COL, type)
 
         val database = this.writableDatabase
 
@@ -98,6 +89,8 @@ class DatabaseHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         database.close()
 
     }
+
+    //Reading DB, returns list of toilets
     @SuppressLint("Range")
     fun getToilets(): ArrayList<Toilet>{
 

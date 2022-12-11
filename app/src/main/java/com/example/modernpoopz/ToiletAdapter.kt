@@ -18,6 +18,7 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
     var onItemClick: ((Toilet) -> Unit)? = null
 
     fun setToilets( toiletList: ArrayList<Toilet>) {
+        //Sort on closest distance
         val sortedListOfToilets = toiletList
             .sortedWith(object : Comparator <Toilet> {
                 override fun compare (t1: Toilet, t2: Toilet) : Int {
@@ -99,7 +100,6 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
                 }
             }
             else{
-                //payable.text = " "
                 payable.visibility = GONE
             }
 
@@ -119,7 +119,6 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
                 }
             }
             else{
-                //target.text = " "
                 target.visibility = GONE
 
             }
@@ -130,12 +129,10 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
                     disabled.visibility = VISIBLE
                 }
                 else{
-                    //disabled.text = " "
                     disabled.visibility = GONE
                 }
             }
             else{
-                //disabled.text = " "
                 disabled.visibility = GONE
             }
 
@@ -145,8 +142,9 @@ class ToiletAdapter: RecyclerView.Adapter<ToiletAdapter.CustomViewHolder>() {
         }
     }
 
-    fun getDistanceBetWeenPoints(toilet:Toilet): Float {
 
+    //Calculating distance between location and toilet
+    fun getDistanceBetWeenPoints(toilet:Toilet): Float {
         val distanceResult = FloatArray(1)
         if (toilet.geometry.coordinates!![0] != null && toilet.geometry.coordinates!![1] != null && MapFragment.userLat != null && MapFragment.userLong != null) {
             val toiletLat = toilet.geometry.coordinates[0]

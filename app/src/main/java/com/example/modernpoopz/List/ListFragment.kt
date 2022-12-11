@@ -68,9 +68,6 @@ class ListFragment : Fragment() {
             }
         }else{
             toiletList= Toilets.getToiletsWithoutPermission()
-           // MapFragment.userLat =  4.41655480828479
-            //MapFragment.userLong =  51.23020595
-
         }
         toiletAdapter?.setToilets(toiletList!!)
 

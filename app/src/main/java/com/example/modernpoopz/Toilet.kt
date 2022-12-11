@@ -20,7 +20,9 @@ class Toilets(
 
     companion object {
         var toilets2: ArrayList<Toilet> = ArrayList()
-        var toilets3: ArrayList<Toilet> = ArrayList()
+        var actualList: ArrayList<Toilet> = ArrayList()
+
+        //Fetch from api -> put in DB
         fun getToiletsFromApi(activity: FragmentActivity) {
 
             val client = OkHttpClient()
@@ -68,17 +70,13 @@ class Toilets(
                                     toilet.properties.OPENINGSUREN_OPM
                                 )
                             } else (println("${toilet.properties.OBJECTID} is een duplicate!"))
-
-
                         }
-
-
                     }
                 }
-            }
-            )
+            })
         }
 
+        //Gets called when storage permission is denied
         fun getDataWithoutPermission() {
 
             val client = OkHttpClient()
@@ -126,22 +124,16 @@ class Toilets(
                             )
                             var id = 0
                             toilets2.add(Toilet(id, geo!!, props!!))
-                            toilets3 = toilets2.distinctBy { it.properties.OBJECTID } as ArrayList<Toilet>
-
-
+                            actualList = toilets2.distinctBy { it.properties.OBJECTID } as ArrayList<Toilet>
                         }
                     }
-
                 }
-
-            }
-            )
+            })
         }
 
         fun getToiletsWithoutPermission(): ArrayList<Toilet>{
             getDataWithoutPermission()
-            println("TOILETS21: " + toilets2.count())
-            return toilets3
+            return actualList
         }
     }
 }

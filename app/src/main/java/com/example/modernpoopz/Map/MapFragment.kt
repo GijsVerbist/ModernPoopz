@@ -70,6 +70,7 @@ class MapFragment : Fragment() {
     private val REQUEST_CHECK_SETTINGS: Int = 61124
 
     companion object{
+        //Default Lat and Long
         var userLat: Double = 51.23020595
         var userLong: Double = 4.41655480828479
 
@@ -102,8 +103,6 @@ class MapFragment : Fragment() {
     override fun onViewCreated(view: View,savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         val osmConfig = Configuration.getInstance()
         osmConfig.userAgentValue = activity?.packageName
         val basePath = File(activity?.cacheDir?.absolutePath, "osmdroid")
@@ -125,6 +124,9 @@ class MapFragment : Fragment() {
 
             getAddressOrLocation(url)
         }
+
+        //Ask for location permission
+        //If refused: Show default location(Ellermanstraat)
         if (locationPermission()) {
             getLocation()
         }
@@ -138,7 +140,7 @@ class MapFragment : Fragment() {
                 ), 100
             )
         }
-        giveMap()
+        loadMap()
 
     }
 
@@ -146,36 +148,29 @@ class MapFragment : Fragment() {
 
     private fun defaultLocation(){
         setCenter(GeoPoint(51.23020595, 4.41655480828479), "Ellermanstraat")
-        println("userlat!: " + userLat)
-        println("userlong!: " + userLong)
-
     }
 
-    private fun giveMap(){
-
+    private fun loadMap(){
+        //Map configuration
         map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-
         map.setMultiTouchControls(true);
-
         map.controller?.setZoom(17.0)
 
         val db = DatabaseHelper(requireContext(), null)
         val toilets = db.getToilets()
 
 
+        //Adding markers
         val markerList = ArrayList<OverlayItem>()
         val hash : HashMap<Int, Toilet> = HashMap()
         for ((count, toilet) in toilets.withIndex()) {
 
 
             val markerItem =OverlayItem(
-
                 toilet.properties.STRAAT,
                 "", GeoPoint(toilet.geometry.coordinates?.get(0)!!,
                     toilet.geometry.coordinates?.get(1)!!
                 )
-
-
             )
 
             val newMarker: Drawable = this.resources.getDrawable(com.example.modernpoopz.R.drawable.ic_marker_foreground)
@@ -187,6 +182,7 @@ class MapFragment : Fragment() {
         val markerOverlay = ItemizedOverlayWithFocus(
             markerList,
             object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem?> {
+                //On button press: show toast with street
                 override fun onItemSingleTapUp(c: Int, item: OverlayItem?): Boolean {
 
                     val t = toilets[c]
@@ -196,10 +192,9 @@ class MapFragment : Fragment() {
                         return false
 
                     }
-
-
                     return true
                 }
+                //On long button press: show detailview
                 override fun onItemLongPress(index: Int, item: OverlayItem?): Boolean {
                     val toilet = toilets[index]
                     val intent = Intent(context, DetailView::class.java)
